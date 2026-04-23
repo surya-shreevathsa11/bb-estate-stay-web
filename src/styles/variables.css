@@ -1,0 +1,15 @@
+:root {
+  --color-ink: #1c1814;
+  --color-parchment: #f5efe0;
+  --color-estate: #2c3d2b;
+  --color-copper: #a0522d;
+  --color-mist: #d9d0c0;
+  --color-cream: #fbf7ee;
+  --color-gold: #c49a3c;
+  --color-bark: #6b4c35;
+  --container-max: 1240px;
+  --gutter-desktop: 80px;
+  --gutter-mobile: 24px;
+  --section-y-desktop: 120px;
+  --section-y-mobile: 72px;
+}

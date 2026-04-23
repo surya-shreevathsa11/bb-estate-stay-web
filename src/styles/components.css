@@ -1,0 +1,72 @@
+.btn {
+  border: 1px solid var(--color-copper);
+  background: transparent;
+  color: var(--color-copper);
+  font-family: 'Jost', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 12px 22px;
+  transition: all 0.4s ease-out;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: var(--color-copper);
+  color: var(--color-parchment);
+}
+
+.btn-primary {
+  background: var(--color-copper);
+  color: var(--color-parchment);
+}
+
+.btn-outline {
+  background: transparent;
+}
+
+.btn-light-outline {
+  border-color: var(--color-parchment);
+  color: var(--color-parchment);
+}
+
+.btn-light-outline:hover {
+  background: var(--color-parchment);
+  color: var(--color-ink);
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-field span {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--color-gold);
+}
+
+.form-field input,
+.form-field textarea,
+.form-field select {
+  border: 0;
+  border-bottom: 1px solid var(--color-mist);
+  padding: 10px 0;
+  background: transparent;
+  font-family: 'Jost', sans-serif;
+  font-size: 16px;
+  color: var(--color-ink);
+}
+
+.form-field input:focus,
+.form-field textarea:focus,
+.form-field select:focus {
+  outline: none;
+  border-bottom-color: var(--color-gold);
+}
+
+.field-error {
+  color: #a53030;
+  font-size: 12px;
+}
