@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { requestPublicQuote } from '../services/api'
+import { getGuestToken, requestGuestQuote } from '../services/api'
 import { validateBooking } from '../utils/validation'
 
 const initialState = {
@@ -36,7 +36,7 @@ export function useBooking() {
     setMessage('')
 
     try {
-      await requestPublicQuote({
+      const payload = {
         name: form.name.trim(),
         email: form.email.trim(),
         phone: form.phone.trim(),
@@ -45,14 +45,27 @@ export function useBooking() {
         adults: Number(form.guests),
         children: 0,
         specialRequests: form.specialRequests.trim(),
-      })
+      }
+      const token = getGuestToken()
+
+      if (!token) {
+        setStatus('error')
+        setMessage('Please sign in from the navigation bar to book a room.')
+        return false
+      }
+
+      await requestGuestQuote(payload, token)
 
       setStatus('success')
-      setMessage('Request sent. We will respond within 24 hours.')
+      setMessage('Booking quote created successfully for your account.')
       return true
     } catch (error) {
       setStatus('error')
-      setMessage(error.message || 'Unable to submit your request.')
+      if (error.status === 401) {
+        setMessage('Session expired. Please sign in again to continue booking.')
+      } else {
+        setMessage(error.message || 'Unable to submit your request.')
+      }
       return false
     }
   }

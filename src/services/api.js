@@ -1,6 +1,7 @@
 const API_BASE_URL = 'https://api.varalabs.in'
 const PROPERTY_SLUG = 'bb-estatestay'
 const REQUEST_TIMEOUT_MS = 12000
+const GUEST_TOKEN_KEY = 'bb_guest_token'
 
 class ApiError extends Error {
   constructor(message, status, details) {
@@ -63,4 +64,49 @@ export function requestPublicQuote(payload) {
   })
 }
 
-export { ApiError, API_BASE_URL, PROPERTY_SLUG }
+export function requestGuestPin({ email, name }) {
+  return request('/api/guest-auth/request-pin', {
+    method: 'POST',
+    body: JSON.stringify({
+      propertySlug: PROPERTY_SLUG,
+      email,
+      name,
+    }),
+  })
+}
+
+export function verifyGuestPin({ email, pin, name }) {
+  return request('/api/guest-auth/verify-pin', {
+    method: 'POST',
+    body: JSON.stringify({
+      propertySlug: PROPERTY_SLUG,
+      email,
+      pin,
+      name,
+    }),
+  })
+}
+
+export function requestGuestQuote(payload, token) {
+  return request('/api/guest/bookings/quote', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+}
+
+export function getGuestToken() {
+  return localStorage.getItem(GUEST_TOKEN_KEY)
+}
+
+export function setGuestToken(token) {
+  localStorage.setItem(GUEST_TOKEN_KEY, token)
+}
+
+export function clearGuestToken() {
+  localStorage.removeItem(GUEST_TOKEN_KEY)
+}
+
+export { ApiError, API_BASE_URL, PROPERTY_SLUG, GUEST_TOKEN_KEY }

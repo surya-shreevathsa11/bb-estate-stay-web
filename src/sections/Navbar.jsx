@@ -1,12 +1,29 @@
 import { useEffect, useState } from 'react'
 import Button from '../components/Button'
 import Container from '../components/Container'
+import SignInModal from '../components/SignInModal'
+import { useGuestAuth } from '../hooks/useGuestAuth'
 
-const links = ['About', 'Experiences', 'Gallery', 'Reviews', 'Reach Us']
+const links = ['About', 'Experiences', 'Rooms', 'Gallery', 'Reviews', 'Reach Us']
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
+  const {
+    open: authOpen,
+    step,
+    status,
+    message,
+    form,
+    signedIn,
+    canSubmit,
+    openModal,
+    closeModal,
+    updateField,
+    sendPin,
+    verifyPin,
+    signOut,
+  } = useGuestAuth()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30)
@@ -27,9 +44,19 @@ function Navbar() {
             </a>
           ))}
         </nav>
-        <Button variant="outline" onClick={() => (window.location.hash = '#booking')}>
-          Book Now
-        </Button>
+        {signedIn ? (
+          <Button
+            variant="outline"
+            className="nav-auth-btn"
+            onClick={signOut}
+          >
+            Sign Out
+          </Button>
+        ) : (
+          <Button variant="outline" className="nav-auth-btn" onClick={openModal}>
+            Sign In
+          </Button>
+        )}
         <button
           type="button"
           className={`menu-toggle ${open ? 'active' : ''}`}
@@ -51,10 +78,42 @@ function Navbar() {
             {link}
           </a>
         ))}
-        <Button variant="primary" className="mobile-book" onClick={() => setOpen(false)}>
-          Book Now
-        </Button>
+        {signedIn ? (
+          <Button
+            variant="primary"
+            className="mobile-book"
+            onClick={() => {
+              signOut()
+              setOpen(false)
+            }}
+          >
+            Sign Out
+          </Button>
+        ) : (
+          <Button
+            variant="primary"
+            className="mobile-book"
+            onClick={() => {
+              setOpen(false)
+              openModal()
+            }}
+          >
+            Sign In
+          </Button>
+        )}
       </div>
+      <SignInModal
+        open={authOpen}
+        step={step}
+        status={status}
+        message={message}
+        form={form}
+        canSubmit={canSubmit}
+        onClose={closeModal}
+        onUpdateField={updateField}
+        onSendPin={sendPin}
+        onVerifyPin={verifyPin}
+      />
     </header>
   )
 }

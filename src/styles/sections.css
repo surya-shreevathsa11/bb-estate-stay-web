@@ -35,6 +35,12 @@
   gap: 28px;
 }
 
+.nav-auth-btn {
+  min-width: 116px;
+  font-size: 12px;
+  padding: 11px 20px;
+}
+
 .nav-links a {
   text-transform: uppercase;
   font-size: 13px;
@@ -62,6 +68,44 @@
 .menu-toggle,
 .mobile-menu {
   display: none;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  background: rgba(28, 24, 20, 0.55);
+  backdrop-filter: blur(4px);
+}
+
+.signin-modal {
+  width: min(460px, calc(100% - 40px));
+  background: var(--color-cream);
+  border: 1px solid var(--color-gold);
+  padding: 28px;
+}
+
+.signin-modal h3 {
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+
+.signin-copy {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.signin-form {
+  display: grid;
+  gap: 14px;
+}
+
+.signin-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
 .hero-section {
@@ -180,6 +224,22 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
+}
+
+.rooms-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.room-card {
+  border: 1px solid var(--color-gold);
+  padding: 20px;
+  background: var(--color-parchment);
+}
+
+.room-card h3 {
+  font-size: 30px;
 }
 
 .experience-card {
@@ -390,6 +450,7 @@
   .about-grid,
   .booking-grid,
   .location-grid,
+  .rooms-grid,
   .experience-grid,
   .reviews-row,
   .footer-grid {
