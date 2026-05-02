@@ -57,14 +57,15 @@ function Experiences() {
       mm.add(
         {
           reduceMotion: '(prefers-reduced-motion: reduce)',
-          desktop: '(min-width: 1024px)',
+          /* Laptop+: pinned scrub (matches original ~1024+). Hover gate keeps phones / touch tablets stacked. */
+          enablePin: '(min-width: 1024px) and (hover: hover)',
         },
         (context) => {
-          const { reduceMotion, desktop } = context.conditions
+          const { reduceMotion, enablePin } = context.conditions
           const panels = gsap.utils.toArray(`.${styles.panel}`, root)
 
           if (!panels.length) return () => {}
-          if (reduceMotion || !desktop || panels.length < 2) return () => {}
+          if (reduceMotion || !enablePin || panels.length < 2) return () => {}
 
           const panelParts = panels.map((panel, index) => {
             const image = panel.querySelector(`.${styles.imagePrimary}`)
@@ -99,7 +100,7 @@ function Experiences() {
           const validParts = panelParts.filter(Boolean)
           if (validParts.length < 2) return () => {}
 
-          gsap.set(root, { height: '100vh', position: 'relative', overflow: 'hidden' })
+          gsap.set(root, { height: '100svh', position: 'relative', overflow: 'hidden' })
           gsap.set(panels, {
             position: 'absolute',
             top: 0,
@@ -176,7 +177,13 @@ function Experiences() {
       )
     }, root)
 
-    return () => ctx.revert()
+    const onResize = () => ScrollTrigger.refresh()
+    window.addEventListener('resize', onResize, { passive: true })
+
+    return () => {
+      window.removeEventListener('resize', onResize)
+      ctx.revert()
+    }
   }, [])
 
   return (

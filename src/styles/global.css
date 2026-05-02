@@ -10,6 +10,12 @@ html {
   scroll-behavior: smooth;
 }
 
+@media (max-width: 1199px) {
+  html {
+    scroll-padding-top: clamp(56px, 14vw, 92px);
+  }
+}
+
 body {
   margin: 0;
   font-family: 'Jost', sans-serif;
