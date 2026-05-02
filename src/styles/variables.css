@@ -1,19 +1,22 @@
 :root {
-  --color-ink: #1c1814;
-  --color-parchment: #f5efe0;
-  --color-estate: #2c3d2b;
-  --color-copper: #a0522d;
-  --color-mist: #d9d0c0;
-  --color-cream: #fbf7ee;
-  --color-gold: #c49a3c;
-  --color-bark: #6b4c35;
+  /* Logo terracotta, darkened slightly for filled sections (hue aligned to #9a4b34 sample) */
+  --color-brand-terracotta: #78392a;
+  /* Readable brown for body/copy on parchment/cream backgrounds */
+  --color-ink: #4a2920;
+  --color-parchment: #f7f1e6;
+  --color-estate: var(--color-brand-terracotta);
+  --color-copper: #a6593d;
+  --color-mist: #efdccb;
+  --color-cream: #fcf7ef;
+  --color-gold: #e8d4b4;
+  --color-bark: #7d422f;
   --container-max: 1240px;
   --gutter-desktop: 80px;
   --gutter-mobile: 24px;
   --section-y-desktop: 120px;
   --section-y-mobile: 72px;
-  --cream: #f2ede4;
-  --gold: #8b6914;
-  --dark: #1c1208;
-  --rust: #8b3a2a;
+  --cream: #f7f1e6;
+  --gold: #e8d4b4;
+  --dark: #4a2920;
+  --rust: #a6593d;
 }

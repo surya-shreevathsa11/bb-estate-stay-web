@@ -10,7 +10,7 @@ const gallery = [
 
 function Gallery() {
   return (
-    <SectionWrapper id="gallery" title="Through the Estate Lens" tone="ink">
+    <SectionWrapper id="gallery" title="Through the Estate Lens" tone="brand">
       <div className="gallery-grid">
         {gallery.map((src, idx) => (
           <motion.figure

@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import Button from '../components/Button'
 import { useDeviceCapabilities } from '../hooks/useDeviceCapabilities'
 import { usePageVisibility } from '../hooks/usePageVisibility'
 import { getHeroVideoSources } from '../utils/video'
@@ -56,11 +55,6 @@ function Hero() {
             stagger: 0.3,
           },
           0.4,
-        )
-        .to(
-          '.hero-actions',
-          { y: 0, opacity: 1, duration: 0.7, ease: 'power2.out' },
-          0.9,
         )
     }
 
@@ -118,7 +112,6 @@ function Hero() {
       </video>
       <div ref={overlayRef} className="hero-overlay" />
       <div className="hero-content" ref={contentRef}>
-        <div className="hero-rule hero-animate" />
         <p className="hero-label hero-animate hero-subtext">Estate Stay In Kodagu</p>
         <h1 className="hero-animate hero-heading">BB Estate Stay</h1>
         <p className="hero-tagline hero-animate hero-subtext">
@@ -126,14 +119,6 @@ function Hero() {
           <br />
           the silence of the Western Ghats
         </p>
-        <div className="hero-actions hero-animate">
-          <Button variant="primary" onClick={() => (window.location.hash = '#booking')}>
-            Book Your Stay
-          </Button>
-          <Button variant="light-outline" onClick={() => (window.location.hash = '#about')}>
-            Explore The Estate
-          </Button>
-        </div>
       </div>
       <div className="scroll-indicator" aria-hidden="true">
         <span />

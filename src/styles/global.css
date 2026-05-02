@@ -66,6 +66,22 @@ a {
   color: var(--color-parchment);
 }
 
+/* Logo terracotta field — headings & body readable on brown */
+.tone-brand {
+  background: var(--color-brand-terracotta);
+  color: var(--color-cream);
+}
+
+.tone-brand .section-subtitle {
+  color: rgba(252, 247, 239, 0.85);
+}
+
+.tone-brand h2,
+.tone-brand h3,
+.tone-brand h4 {
+  color: var(--color-cream);
+}
+
 .grain {
   background-image: radial-gradient(rgba(196, 154, 60, 0.05) 1px, transparent 1px);
   background-size: 7px 7px;

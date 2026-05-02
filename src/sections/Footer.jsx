@@ -1,11 +1,15 @@
 import Container from '../components/Container'
+import brandLogo from '../assets/bb-estate-stay-logo.jpeg'
 
 function Footer() {
   return (
     <footer className="site-footer">
       <Container className="footer-grid">
         <div>
-          <h3>BB Estate Stay</h3>
+          <h3 className="footer-brand">
+            <img src={brandLogo} alt="BB Estate Stay logo" className="brand-logo brand-logo--footer" />
+            <span>BB Estate Stay</span>
+          </h3>
           <p>An estate stay. A living home.</p>
         </div>
         <div>

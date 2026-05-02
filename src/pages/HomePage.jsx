@@ -3,7 +3,6 @@ import Hero from '../sections/Hero'
 import About from '../sections/About'
 import Experiences from '../sections/Experiences'
 import Rooms from '../sections/Rooms'
-import Booking from '../sections/Booking'
 import Gallery from '../sections/Gallery'
 import Reviews from '../sections/Reviews'
 import Location from '../sections/Location'
@@ -19,7 +18,6 @@ function HomePage() {
         <About />
         <Experiences />
         <Rooms />
-        <Booking />
         <Gallery />
         <Reviews />
         <Location />

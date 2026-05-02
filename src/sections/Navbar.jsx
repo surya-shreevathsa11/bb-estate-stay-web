@@ -1,13 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Button from '../components/Button'
 import Container from '../components/Container'
 import SignInModal from '../components/SignInModal'
 import { useDeviceCapabilities } from '../hooks/useDeviceCapabilities'
 import { useGuestAuth } from '../hooks/useGuestAuth'
-
-gsap.registerPlugin(ScrollTrigger)
+import brandLogo from '../assets/bb-estate-stay-logo.jpeg'
 
 const links = [
   { label: 'About', id: 'about' },
@@ -22,7 +20,6 @@ function Navbar() {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState('about')
-  const navRef = useRef(null)
   const menuRef = useRef(null)
   const { reducedMotion } = useDeviceCapabilities()
   const {
@@ -42,70 +39,13 @@ function Navbar() {
   } = useGuestAuth()
 
   useEffect(() => {
-    if (!navRef.current) return
-
-    const nav = navRef.current
-    const setLight = () => {
-      setScrolled(false)
-      gsap.set(nav, {
-        backgroundColor: 'rgba(245, 239, 224, 0)',
-        color: '#fbf7ee',
-        borderBottomColor: 'rgba(196, 154, 60, 0)',
-        paddingTop: 18,
-        paddingBottom: 18,
-        textShadow: 'none',
-      })
-    }
-    const setDark = () => {
-      setScrolled(true)
-      gsap.set(nav, {
-        backgroundColor: 'rgba(245, 239, 224, 0.96)',
-        color: '#1c1814',
-        borderBottomColor: '#c49a3c',
-        paddingTop: 18,
-        paddingBottom: 18,
-        textShadow: 'none',
-      })
-    }
-
-    if (reducedMotion) {
-      setLight()
-      const fallback = ScrollTrigger.create({
-        trigger: '#hero',
-        start: 'bottom top',
-        onEnter: setDark,
-        onLeaveBack: setLight,
-      })
-      return () => fallback.kill()
-    }
-
-    const toDark = gsap.timeline({ paused: true }).to(nav, {
-      duration: 0.5,
-      ease: 'power2.out',
-      backgroundColor: 'rgba(245, 239, 224, 0.96)',
-      color: '#1c1814',
-      borderBottomColor: '#c49a3c',
-      paddingTop: 18,
-      paddingBottom: 18,
-      textShadow: 'none',
-      overwrite: 'auto',
-      onStart: () => setScrolled(true),
-      onReverseComplete: () => setScrolled(false),
-    })
-
-    setLight()
-    const trigger = ScrollTrigger.create({
-      trigger: '#hero',
-      start: 'bottom top',
-      onEnter: () => toDark.play(),
-      onLeaveBack: () => toDark.reverse(),
-    })
-
+    const onScroll = () => setScrolled(window.scrollY > 30)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
     return () => {
-      trigger.kill()
-      toDark.kill()
+      window.removeEventListener('scroll', onScroll)
     }
-  }, [reducedMotion])
+  }, [])
 
   useEffect(() => {
     const sectionNodes = links
@@ -168,10 +108,11 @@ function Navbar() {
   }, [open, reducedMotion])
 
   return (
-    <header ref={navRef} className={`site-nav ${scrolled ? 'scrolled' : ''}`}>
+    <header className={`site-nav ${scrolled ? 'scrolled' : ''}`}>
       <Container className="nav-inner">
         <a className="logo" href="#hero">
-          <span className="logo-mark">BB</span> Estate Stay
+          <img src={brandLogo} alt="BB Estate Stay logo" className="brand-logo brand-logo--nav" />
+          <span>BB Estate Stay</span>
         </a>
         <nav className="nav-links">
           {links.map((link) => (

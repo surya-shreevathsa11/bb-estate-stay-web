@@ -6,7 +6,7 @@ function Location() {
       id="reach-us"
       title="Finding Us"
       subtitle="The journey through the ghats is the first gift."
-      tone="cream"
+      tone="brand"
     >
       <div className="location-grid">
         <div className="map-frame">
