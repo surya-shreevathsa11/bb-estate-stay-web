@@ -779,6 +779,17 @@
 }
 
 @media (max-width: 767px) {
+  .site-nav.scrolled {
+    backdrop-filter: none;
+  }
+
+  .mobile-menu {
+    justify-content: flex-start;
+    overflow-y: auto;
+    padding-top: calc(92px + env(safe-area-inset-top, 0px));
+    padding-bottom: max(24px, env(safe-area-inset-bottom, 0px));
+  }
+
   .hero-content {
     left: var(--gutter-mobile);
     right: var(--gutter-mobile);
