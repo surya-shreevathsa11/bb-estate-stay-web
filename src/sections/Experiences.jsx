@@ -57,8 +57,8 @@ function Experiences() {
       mm.add(
         {
           reduceMotion: '(prefers-reduced-motion: reduce)',
-          /* Laptop+: pinned scrub (matches original ~1024+). Hover gate keeps phones / touch tablets stacked. */
-          enablePin: '(min-width: 1024px) and (hover: hover)',
+          /* Enable pinned scrub across all viewports (mobile, iPad, laptop). */
+          enablePin: '(min-width: 0px)',
         },
         (context) => {
           const { reduceMotion, enablePin } = context.conditions
@@ -147,11 +147,6 @@ function Experiences() {
               end: `+=${(validParts.length - 1) * 100}%`,
               pin: true,
               scrub: 1,
-              snap: {
-                snapTo: 1 / (validParts.length - 1),
-                duration: { min: 0.15, max: 0.35 },
-                ease: 'power1.inOut',
-              },
               anticipatePin: 1,
               invalidateOnRefresh: true,
             },
@@ -169,7 +164,7 @@ function Experiences() {
             masterTl.to(parts.panel, { yPercent: 0, duration: 1 }, step)
             masterTl.fromTo(parts.image, { yPercent: 8, scale: 1.12 }, { yPercent: 0, scale: 1.06, duration: 0.55, ease: 'power2.out' }, step + 0.15)
             revealPanelContent(masterTl, parts, step + 0.2)
-            masterTl.to(prev.panel, { autoAlpha: 0, duration: 0.2 }, step + 0.78)
+            masterTl.to(prev.panel, { autoAlpha: 0, duration: 0.12 }, step + 0.64)
           })
 
           return () => {}

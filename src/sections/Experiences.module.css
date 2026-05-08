@@ -172,19 +172,41 @@
 
 @media (max-width: 767px) {
   .copy {
-    top: auto;
-    bottom: calc(10vh + env(safe-area-inset-bottom, 0px));
-    transform: none;
-    max-width: calc(100vw - 48px);
+    left: 50%;
+    top: 50%;
+    bottom: auto;
+    transform: translate(-50%, -50%);
+    width: calc(100vw - 48px);
+    max-width: 540px;
+    text-align: center;
+  }
+
+  .topMeta {
+    justify-content: center;
+    gap: 14px;
+  }
+
+  .divider {
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .title {
-    font-size: clamp(34px, 10vw, 54px);
+    font-size: clamp(38px, 10.5vw, 56px);
+  }
+
+  .description {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 34ch;
+    font-size: clamp(16px, 4.4vw, 18px);
+    line-height: 1.65;
+    text-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
   }
 }
 
-/* Phones / tablets / touch: stacked full-bleed cards (no pinned scroll) */
-@media (max-width: 1023px), (hover: none) {
+/* Reduced-motion fallback: stacked full-bleed cards (no pinned scroll) */
+@media (prefers-reduced-motion: reduce) {
   .root {
     scroll-snap-type: y proximity;
     overscroll-behavior-y: contain;

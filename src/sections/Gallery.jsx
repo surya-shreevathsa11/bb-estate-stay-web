@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import SectionWrapper from '../components/SectionWrapper'
 
@@ -9,20 +10,75 @@ const gallery = [
 ]
 
 function Gallery() {
+  const scrollerRef = useRef(null)
+  const [canScrollLeft, setCanScrollLeft] = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(false)
+
+  useEffect(() => {
+    const scroller = scrollerRef.current
+    if (!scroller) return undefined
+
+    const updateArrows = () => {
+      const maxLeft = scroller.scrollWidth - scroller.clientWidth
+      setCanScrollLeft(scroller.scrollLeft > 2)
+      setCanScrollRight(scroller.scrollLeft < maxLeft - 2)
+    }
+
+    updateArrows()
+    scroller.addEventListener('scroll', updateArrows, { passive: true })
+    window.addEventListener('resize', updateArrows)
+
+    return () => {
+      scroller.removeEventListener('scroll', updateArrows)
+      window.removeEventListener('resize', updateArrows)
+    }
+  }, [])
+
+  const scrollGallery = (direction) => {
+    const scroller = scrollerRef.current
+    if (!scroller) return
+
+    const amount = Math.max(scroller.clientWidth * 0.78, 260)
+    scroller.scrollBy({
+      left: direction === 'left' ? -amount : amount,
+      behavior: 'smooth',
+    })
+  }
+
   return (
     <SectionWrapper id="gallery" title="Through the Estate Lens" tone="brand">
-      <div className="gallery-grid">
-        {gallery.map((src, idx) => (
-          <motion.figure
-            key={src}
-            initial={{ opacity: 0, scale: 0.97 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, amount: 0.25 }}
-            transition={{ duration: 0.6, delay: idx * 0.1 }}
-          >
-            <img src={src} alt="Estate gallery" />
-          </motion.figure>
-        ))}
+      <div className="gallery-shell">
+        <button
+          type="button"
+          className="gallery-arrow gallery-arrow-left"
+          onClick={() => scrollGallery('left')}
+          aria-label="Scroll gallery left"
+          disabled={!canScrollLeft}
+        >
+          &#8592;
+        </button>
+        <div className="gallery-grid" ref={scrollerRef}>
+          {gallery.map((src, idx) => (
+            <motion.figure
+              key={src}
+              initial={{ opacity: 0, scale: 0.97 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, amount: 0.25 }}
+              transition={{ duration: 0.6, delay: idx * 0.1 }}
+            >
+              <img src={src} alt="Estate gallery" />
+            </motion.figure>
+          ))}
+        </div>
+        <button
+          type="button"
+          className="gallery-arrow gallery-arrow-right"
+          onClick={() => scrollGallery('right')}
+          aria-label="Scroll gallery right"
+          disabled={!canScrollRight}
+        >
+          &#8594;
+        </button>
       </div>
     </SectionWrapper>
   )
