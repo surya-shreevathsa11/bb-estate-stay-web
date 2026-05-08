@@ -38,7 +38,13 @@ function Gallery() {
     const scroller = scrollerRef.current
     if (!scroller) return
 
-    const amount = Math.max(scroller.clientWidth * 0.78, 260)
+    const isMobile = window.matchMedia('(max-width: 767px)').matches
+    const firstFigure = scroller.querySelector('figure')
+    const styles = window.getComputedStyle(scroller)
+    const gap = Number.parseFloat(styles.columnGap || styles.gap || '0') || 0
+    const mobileStep = firstFigure ? firstFigure.getBoundingClientRect().width + gap : scroller.clientWidth
+    const amount = isMobile ? mobileStep : Math.max(scroller.clientWidth * 0.78, 260)
+
     scroller.scrollBy({
       left: direction === 'left' ? -amount : amount,
       behavior: 'smooth',
