@@ -116,26 +116,26 @@ function Experiences() {
               autoAlpha: index === 0 ? 1 : 0,
             })
             gsap.set(parts.image, { yPercent: 8, scale: 1.12 })
-            gsap.set(parts.wordEls, { y: '110%', skewY: 5 })
-            gsap.set(parts.lines, { autoAlpha: 0, y: 18 })
-            gsap.set(parts.kicker, { autoAlpha: 0, y: 10, letterSpacing: '0.06em' })
-            gsap.set(parts.counter, { autoAlpha: 0, y: 16 })
+            gsap.set(parts.wordEls, { autoAlpha: 0 })
+            gsap.set(parts.lines, { autoAlpha: 0 })
+            gsap.set(parts.kicker, { autoAlpha: 0, letterSpacing: '0.06em' })
+            gsap.set(parts.counter, { autoAlpha: 0 })
             gsap.set(parts.divider, { scaleX: 0, transformOrigin: 'left center' })
           })
 
           const revealPanelContent = (tl, parts, position = 0) => {
-            tl.to(parts.kicker, { autoAlpha: 1, y: 0, letterSpacing: '0.16em', duration: 0.24, ease: 'power2.out' }, position)
-            tl.to(parts.counter, { autoAlpha: 1, y: 0, duration: 0.2, ease: 'power2.out' }, position)
+            tl.to(parts.kicker, { autoAlpha: 1, letterSpacing: '0.16em', duration: 0.24, ease: 'power2.out' }, position)
+            tl.to(parts.counter, { autoAlpha: 1, duration: 0.2, ease: 'power2.out' }, position)
             tl.to(parts.divider, { scaleX: 1, duration: 0.24, ease: 'power2.out' }, position + 0.04)
-            tl.to(parts.wordEls, { y: '0%', skewY: 0, stagger: 0.03, duration: 0.28, ease: 'expo.out' }, position + 0.04)
-            tl.to(parts.lines, { autoAlpha: 1, y: 0, stagger: 0.04, duration: 0.22, ease: 'power2.out' }, position + 0.08)
+            tl.to(parts.wordEls, { autoAlpha: 1, stagger: 0.03, duration: 0.24, ease: 'power2.out' }, position + 0.04)
+            tl.to(parts.lines, { autoAlpha: 1, stagger: 0.04, duration: 0.2, ease: 'power2.out' }, position + 0.08)
           }
 
           const hidePanelContent = (tl, parts, position = 0) => {
-            tl.to(parts.wordEls, { y: '-100%', skewY: -2, duration: 0.2, stagger: 0.01, ease: 'power1.in' }, position)
-            tl.to(parts.lines, { autoAlpha: 0, y: -12, duration: 0.16, stagger: 0.02, ease: 'power1.in' }, position)
-            tl.to(parts.kicker, { autoAlpha: 0, y: -8, duration: 0.14, ease: 'power1.in' }, position)
-            tl.to(parts.counter, { autoAlpha: 0, y: -10, duration: 0.14, ease: 'power1.in' }, position)
+            tl.to(parts.wordEls, { autoAlpha: 0, duration: 0.18, stagger: 0.01, ease: 'power1.in' }, position)
+            tl.to(parts.lines, { autoAlpha: 0, duration: 0.14, stagger: 0.02, ease: 'power1.in' }, position)
+            tl.to(parts.kicker, { autoAlpha: 0, duration: 0.14, ease: 'power1.in' }, position)
+            tl.to(parts.counter, { autoAlpha: 0, duration: 0.14, ease: 'power1.in' }, position)
             tl.to(parts.divider, { scaleX: 0, transformOrigin: 'right center', duration: 0.14, ease: 'power1.in' }, position)
           }
 
