@@ -1,4 +1,15 @@
 :root {
+  --font-heading-family: 'Cormorant Garamond', serif;
+  --font-body-family: 'Jost', sans-serif;
+  /* Section titles, cards, modals, policy rows (not the hero main title) */
+  --font-size-heading: clamp(2rem, 4vw, 2.75rem);
+  /* Hero site name — only heading at this scale */
+  --font-size-hero-heading: clamp(3rem, 8vw, 5.25rem);
+  /* Taglines under titles, hero line two, meta under headings */
+  --font-size-subheading: clamp(1.3125rem, 2.1vw, 1.5625rem);
+  /* Default paragraph / card copy */
+  --font-size-body: clamp(1.0625rem, 1.25vw, 1.1875rem);
+
   /* Logo terracotta, darkened slightly for filled sections (hue aligned to #9a4b34 sample) */
   --color-brand-terracotta: #78392a;
   /* Readable brown for body/copy on parchment/cream backgrounds */

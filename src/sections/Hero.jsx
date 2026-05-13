@@ -114,9 +114,9 @@ function Hero() {
       <div className="hero-content" ref={contentRef}>
         <p className="hero-label hero-animate hero-subtext"></p>
         <h1 className="hero-animate hero-heading">BB Estate Stay</h1>
-        <h2 className="hero-subheading hero-animate hero-subtext">
+        <p className="hero-subheading hero-animate hero-subtext">
           Heritage Homestay in Madikeri
-        </h2>
+        </p>
         <p className="hero-description hero-animate hero-subtext">
           Stay at a beautifully preserved 175-year-old heritage cottage in Kadagadalu, Madikeri,
           surrounded by misty coffee plantations, breathtaking hill views, authentic Coorg

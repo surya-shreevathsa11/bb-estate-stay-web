@@ -28,8 +28,8 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.9rem;
+  font-family: var(--font-heading-family);
+  font-size: clamp(1.25rem, 2.2vw, 1.5rem);
   font-weight: 500;
 }
 
@@ -114,8 +114,8 @@
   justify-content: center;
   align-items: center;
   gap: 16px;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 38px;
+  font-family: var(--font-body-family);
+  font-size: var(--font-size-heading);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -196,7 +196,6 @@
 }
 
 .signin-modal h3 {
-  font-size: 36px;
   margin-bottom: 8px;
 }
 
@@ -321,23 +320,24 @@
 }
 
 .hero-content h1 {
-  font-size: clamp(52px, 5vw, 78px);
-  margin: clamp(28px, 4vh, 24px) 0 -9.5px;
+  font-size: var(--font-size-hero-heading);
+  line-height: 1.06;
+  letter-spacing: 0.03em;
+  margin: clamp(20px, 3vh, 32px) 0 clamp(18px, 2.8vh, 32px);
 }
 
 .hero-subheading {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: var(--font-body-family);
+  font-size: var(--font-size-subheading);
   font-weight: 400;
-  font-size: clamp(22px, 3.2vw, 34px);
-  line-height: 1.28;
-  letter-spacing: -0.01em;
+  line-height: 1.35;
+  letter-spacing: 0.02em;
   color: var(--color-parchment);
-  margin: 0 0 16px;
-  white-space: nowrap;
+  margin: 0 0 18px;
 }
 
 .hero-description {
-  font-size: clamp(15px, 1.45vw, 18px);
+  font-size: var(--font-size-body);
   line-height: 1.7;
   font-weight: 300;
   color: rgba(240, 236, 228, 0.92);
@@ -378,14 +378,6 @@
 /* About: top-align copy and media so the collage can sit higher in the section */
 .about-grid {
   align-items: start;
-}
-
-/* Match hero subheading (“Heritage Homestay…”) scale */
-#about .section-header h2 {
-  font-size: clamp(22px, 3.2vw, 34px);
-  font-weight: 400;
-  letter-spacing: -0.01em;
-  line-height: 1.28;
 }
 
 #about .section-header {
@@ -479,16 +471,16 @@
 }
 
 .experiences-heading {
-  font-size: 48px;
+  font-size: var(--font-size-heading);
   margin: 0;
 }
 
 .experiences-subheading {
   margin-top: 10px;
-  font-family: 'Cormorant Garamond', serif;
+  font-family: var(--font-body-family);
   font-style: italic;
-  font-weight: 300;
-  font-size: 24px;
+  font-weight: 400;
+  font-size: var(--font-size-subheading);
   color: rgb(28 18 8 / 60%);
 }
 
@@ -516,7 +508,8 @@
 .experience-title {
   position: relative;
   margin: 40px 0 0;
-  font-size: 20px;
+  font-family: var(--font-heading-family);
+  font-size: var(--font-size-heading);
   color: var(--dark);
   transition: transform 0.3s ease;
 }
@@ -525,7 +518,7 @@
   position: relative;
   margin: 0;
   color: rgb(28 18 8 / 74%);
-  font-size: 15px;
+  font-size: var(--font-size-body);
   line-height: 1.75;
 }
 
@@ -608,16 +601,16 @@
 
 .room-price-line {
   margin: 0;
-  font-family: 'Cormorant Garamond', serif;
+  font-family: var(--font-body-family);
+  font-size: var(--font-size-body);
 }
 
 .room-price {
-  font-size: 26px;
   font-weight: 600;
 }
 
 .room-price-unit {
-  font-size: 14px;
+  font-size: inherit;
   color: rgb(28 18 8 / 55%);
 }
 
@@ -656,10 +649,6 @@
 
 .room-add-cart {
   margin-top: 4px;
-}
-
-.room-card h3 {
-  font-size: 30px;
 }
 
 .rooms-grid {
@@ -827,8 +816,11 @@
   background: transparent;
   border: 0;
   padding: 16px 0;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 28px;
+  font-family: var(--font-heading-family);
+  font-size: var(--font-size-heading);
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  line-height: 1.12;
   cursor: pointer;
 }
 
@@ -917,7 +909,7 @@
 
 .footer-tagline {
   margin: 0;
-  font-size: 15px;
+  font-size: inherit;
   line-height: 1.5;
   opacity: 0.92;
   max-width: 36ch;
@@ -930,7 +922,7 @@
   padding-top: 14px;
   border-top: 1px solid var(--color-gold);
   text-align: center;
-  font-size: 13px;
+  font-size: var(--font-size-body);
   line-height: 1.5;
 }
 
