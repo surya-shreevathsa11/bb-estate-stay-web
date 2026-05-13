@@ -10,13 +10,13 @@ const experiences = [
     title: 'Estate Walks',
     description:
       'Walk through scenic coffee plantations and spice estates in Madikeri. Enjoy peaceful trails, fresh mountain air, and beautiful Coorg hill views.',
-    image: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=2000&auto=format&fit=crop',
+    image: '/estate-walk.png',
   },
   {
     title: 'Verandah Evenings',
     description:
       'Relax in a peaceful verandah surrounded by the misty hills of Madikeri. Enjoy slow living, fresh mountain air, and the calm beauty of Coorg nature.',
-    image: 'https://images.unsplash.com/photo-1505693314120-0d443867891c?q=80&w=2000&auto=format&fit=crop',
+    image: '/verandah-eve.png',
   },
   {
     title: 'Coorg Meals',
