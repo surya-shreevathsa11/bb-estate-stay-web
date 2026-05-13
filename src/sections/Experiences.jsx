@@ -9,19 +9,19 @@ const experiences = [
   {
     title: 'Estate Walks',
     description:
-      'Slow trails through coffee rows and cardamom groves.\nEvery turn opens into misty hills and quiet air.',
+      'Walk through scenic coffee plantations and spice estates in Madikeri. Enjoy peaceful trails, fresh mountain air, and beautiful Coorg hill views.',
     image: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=2000&auto=format&fit=crop',
   },
   {
     title: 'Verandah Evenings',
     description:
-      'Golden hour settles over old timber and warm tea.\nThe estate slows down to long, easy conversations.',
+      'Relax in a peaceful verandah surrounded by the misty hills of Madikeri. Enjoy slow living, fresh mountain air, and the calm beauty of Coorg nature.',
     image: 'https://images.unsplash.com/photo-1505693314120-0d443867891c?q=80&w=2000&auto=format&fit=crop',
   },
   {
-    title: 'Coorg Home Meals',
+    title: 'Coorg Meals',
     description:
-      'House recipes arrive hot, fragrant, and generous.\nMeals feel personal, rooted, and deeply local.',
+      'Enjoy traditional homemade Coorg food prepared with local flavours and spices. Freshly cooked meals bring the warmth of local hospitality to your stay.',
     image: 'https://images.unsplash.com/photo-1498837167922-ddd27525d352?q=80&w=2000&auto=format&fit=crop',
   },
   {
@@ -33,13 +33,13 @@ const experiences = [
   {
     title: 'Bird Watching',
     description:
-      'Morning calls echo across the canopy and valley.\nStillness reveals color, movement, and rhythm.',
+      'Experience peaceful bird watching in the coffee plantations and hills of Madikeri where morning sounds, fresh air, and the beauty of Coorg nature surround you.',
     image: 'https://images.unsplash.com/photo-1444464666168-49d633b86797?q=80&w=2000&auto=format&fit=crop',
   },
   {
     title: 'Estate to Cup',
     description:
-      'From ripened cherries to a fresh brewed pour.\nYou taste the estate in every careful step.',
+      'Experience the journey from fresh coffee cherries to authentic Coorg coffee grown in the plantations of Madikeri and crafted with care at every step.',
     image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2000&auto=format&fit=crop',
   },
 ]
@@ -116,11 +116,17 @@ function Experiences() {
               autoAlpha: index === 0 ? 1 : 0,
             })
             gsap.set(parts.image, { yPercent: 8, scale: 1.12 })
-            gsap.set(parts.wordEls, { autoAlpha: 0 })
-            gsap.set(parts.lines, { autoAlpha: 0 })
-            gsap.set(parts.kicker, { autoAlpha: 0, letterSpacing: '0.06em' })
-            gsap.set(parts.counter, { autoAlpha: 0 })
-            gsap.set(parts.divider, { scaleX: 0, transformOrigin: 'left center' })
+            gsap.set(parts.wordEls, { autoAlpha: index === 0 ? 1 : 0 })
+            gsap.set(parts.lines, { autoAlpha: index === 0 ? 1 : 0 })
+            gsap.set(parts.kicker, {
+              autoAlpha: index === 0 ? 1 : 0,
+              letterSpacing: index === 0 ? '0.16em' : '0.06em',
+            })
+            gsap.set(parts.counter, { autoAlpha: index === 0 ? 1 : 0 })
+            gsap.set(parts.divider, {
+              scaleX: index === 0 ? 1 : 0,
+              transformOrigin: 'left center',
+            })
           })
 
           const revealPanelContent = (tl, parts, position = 0) => {
@@ -144,15 +150,13 @@ function Experiences() {
             scrollTrigger: {
               trigger: root,
               start: 'top top',
-              end: `+=${(validParts.length - 1) * 100}%`,
+              end: `+=${validParts.length * 100}%`,
               pin: true,
               scrub: 1,
               anticipatePin: 1,
               invalidateOnRefresh: true,
             },
           })
-
-          revealPanelContent(masterTl, validParts[0], 0.03)
 
           validParts.slice(1).forEach((parts, index) => {
             const prev = validParts[index]
@@ -166,6 +170,9 @@ function Experiences() {
             revealPanelContent(masterTl, parts, step + 0.2)
             masterTl.to(prev.panel, { autoAlpha: 0, duration: 0.12 }, step + 0.64)
           })
+
+          const lastParts = validParts[validParts.length - 1]
+          hidePanelContent(masterTl, lastParts, validParts.length - 1)
 
           return () => {}
         },

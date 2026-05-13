@@ -5,6 +5,9 @@ function SignInModal({
   open,
   step,
   status,
+  googleStatus,
+  googleButtonRef,
+  googleClientConfigured,
   message,
   form,
   canSubmit,
@@ -24,6 +27,9 @@ function SignInModal({
     await onVerifyPin()
   }
 
+  const pinBusy = status === 'loading'
+  const googleBusy = googleStatus === 'loading'
+
   return (
     <div className="modal-backdrop" role="presentation" onClick={onClose}>
       <section
@@ -34,8 +40,35 @@ function SignInModal({
       >
         <h3>Sign In To Book Rooms</h3>
         <p className="signin-copy">
-          Verify with email PIN to continue booking.
+          Sign in with Google or verify your email with a one-time PIN to continue
+          booking.
         </p>
+
+        <div className="signin-google-wrap">
+          {!googleClientConfigured ? (
+            <p className="form-message muted">
+              Google sign-in is not configured for this site build. Use email PIN
+              below, or set <code className="signin-env-hint">VITE_GOOGLE_CLIENT_ID</code>{' '}
+              to match your API&apos;s OAuth client.
+            </p>
+          ) : (
+            <>
+              <div
+                ref={googleButtonRef}
+                className="signin-google-btn-wrap"
+                aria-busy={googleBusy ? 'true' : 'false'}
+              />
+              {googleBusy ? (
+                <p className="form-message">Signing in with Google…</p>
+              ) : null}
+            </>
+          )}
+        </div>
+
+        <p className="signin-divider" role="separator">
+          or use email PIN
+        </p>
+
         <form onSubmit={handleSubmit} className="signin-form">
           <Input
             id="signin-name"
@@ -56,13 +89,16 @@ function SignInModal({
             <Input
               id="signin-pin"
               label="PIN"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              maxLength={6}
               value={form.pin}
               onChange={(event) => onUpdateField('pin', event.target.value)}
               required
             />
           )}
           {message && (
-            <p className={`form-message ${status === 'error' ? 'error' : 'ok'}`}>
+            <p className={`form-message ${status === 'error' || googleStatus === 'error' ? 'error' : 'ok'}`}>
               {message}
             </p>
           )}
@@ -70,8 +106,8 @@ function SignInModal({
             <Button variant="outline" type="button" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" disabled={!canSubmit}>
-              {status === 'loading'
+            <Button type="submit" disabled={!canSubmit || googleBusy}>
+              {pinBusy
                 ? 'Please wait...'
                 : step === 'requestPin'
                   ? 'Send PIN'

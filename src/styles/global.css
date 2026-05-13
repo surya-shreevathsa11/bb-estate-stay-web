@@ -24,6 +24,10 @@ body {
   line-height: 1.85;
 }
 
+p {
+  font-size: clamp(15px, 1.45vw, 18px);
+}
+
 h1,
 h2,
 h3,

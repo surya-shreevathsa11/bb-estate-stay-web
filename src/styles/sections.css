@@ -216,6 +216,39 @@
   gap: 10px;
 }
 
+.signin-google-wrap {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.signin-google-btn-wrap {
+  min-height: 44px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.signin-divider {
+  text-align: center;
+  margin: 12px 0 16px;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-bark);
+}
+
+.signin-env-hint {
+  font-size: 0.85em;
+  word-break: break-all;
+}
+
+.form-message.muted {
+  color: var(--color-bark);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
 .hero-section {
   min-height: 100vh;
   position: relative;
@@ -260,12 +293,12 @@
 .hero-overlay {
   position: absolute;
   inset: 0;
-  opacity: 0.44;
+  opacity: 0.98;
   background: linear-gradient(
     to bottom,
-    rgba(28, 24, 20, 0.56) 0%,
-    rgba(28, 24, 20, 0.38) 45%,
-    rgba(28, 24, 20, 0.54) 100%
+    rgba(28, 24, 20, 0.72) 0%,
+    rgba(28, 24, 20, 0.52) 45%,
+    rgba(28, 24, 20, 0.68) 100%
   );
 }
 
@@ -288,16 +321,28 @@
 }
 
 .hero-content h1 {
-  font-size: clamp(52px, 9vw, 88px);
-  margin: 0 0 14px;
+  font-size: clamp(52px, 5vw, 78px);
+  margin: clamp(28px, 4vh, 24px) 0 -9.5px;
 }
 
-.hero-tagline {
+.hero-subheading {
   font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-size: 24px;
-  color: var(--color-mist);
+  font-weight: 400;
+  font-size: clamp(22px, 3.2vw, 34px);
+  line-height: 1.28;
+  letter-spacing: -0.01em;
+  color: var(--color-parchment);
+  margin: 0 0 16px;
+  white-space: nowrap;
+}
+
+.hero-description {
+  font-size: clamp(15px, 1.45vw, 18px);
+  line-height: 1.7;
+  font-weight: 300;
+  color: rgba(240, 236, 228, 0.92);
   margin: 0;
+  max-width: 52ch;
 }
 
 .hero-actions {
@@ -333,6 +378,40 @@
 /* About: top-align copy and media so the collage can sit higher in the section */
 .about-grid {
   align-items: start;
+}
+
+/* Match hero subheading (“Heritage Homestay…”) scale */
+#about .section-header h2 {
+  font-size: clamp(22px, 3.2vw, 34px);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.28;
+}
+
+#about .section-header {
+  margin-bottom: 20px;
+}
+
+#about article {
+  margin-top: 0;
+}
+
+#about article p {
+  margin: 0 0 12px;
+}
+
+#about article p:last-child {
+  margin-bottom: 0;
+}
+
+@media (min-width: 768px) {
+  #about .about-grid {
+    gap: clamp(40px, 6vw, 72px);
+  }
+
+  #about .about-images {
+    margin-left: clamp(16px, 3.5vw, 56px);
+  }
 }
 
 .about-images {
@@ -477,6 +556,108 @@
   background: var(--color-parchment);
 }
 
+.room-card--media {
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.room-card-media {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.room-card-banner {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  border-bottom: 1px solid var(--color-gold);
+}
+
+.room-card-gallery {
+  display: flex;
+  gap: 6px;
+  padding: 8px 10px;
+  background: rgb(28 24 20 / 4%);
+  overflow-x: auto;
+}
+
+.room-card-gallery img {
+  width: 72px;
+  height: 56px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid rgb(139 105 20 / 35%);
+}
+
+.room-card-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.room-card-body p {
+  margin: 0;
+  flex: 1;
+}
+
+.room-price-line {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.room-price {
+  font-size: 26px;
+  font-weight: 600;
+}
+
+.room-price-unit {
+  font-size: 14px;
+  color: rgb(28 18 8 / 55%);
+}
+
+.room-booking-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.room-date-row,
+.room-guest-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.room-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgb(28 18 8 / 65%);
+}
+
+.room-field input,
+.room-field select {
+  font: inherit;
+  padding: 8px 10px;
+  border: 1px solid var(--color-gold);
+  background: var(--color-cream);
+  color: var(--color-ink);
+}
+
+.room-add-cart {
+  margin-top: 4px;
+}
+
 .room-card h3 {
   font-size: 30px;
 }
@@ -485,6 +666,22 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
+}
+
+.nav-cart-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  margin-left: 6px;
+  padding: 0 5px;
+  border-radius: 999px;
+  font-size: 11px;
+  line-height: 1;
+  vertical-align: middle;
+  background: var(--color-copper);
+  color: var(--color-parchment);
 }
 
 .booking-aside {
@@ -889,6 +1086,7 @@
     max-height: none;
     aspect-ratio: auto;
     margin-top: 0;
+    order: -1;
   }
 
   .about-images img:first-child {

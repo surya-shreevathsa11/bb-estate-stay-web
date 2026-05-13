@@ -77,7 +77,7 @@ function Hero() {
             overwrite: 'auto',
           })
           gsap.to(overlayRef.current, {
-            opacity: 0.32 + progress * 0.2,
+            opacity: 0.68 + progress * 0.22,
             duration: 0.16,
             overwrite: 'auto',
           })
@@ -112,12 +112,15 @@ function Hero() {
       </video>
       <div ref={overlayRef} className="hero-overlay" />
       <div className="hero-content" ref={contentRef}>
-        <p className="hero-label hero-animate hero-subtext">Estate Stay In Kodagu</p>
+        <p className="hero-label hero-animate hero-subtext"></p>
         <h1 className="hero-animate hero-heading">BB Estate Stay</h1>
-        <p className="hero-tagline hero-animate hero-subtext">
-          Where coffee blossoms meet
-          <br />
-          the silence of the Western Ghats
+        <h2 className="hero-subheading hero-animate hero-subtext">
+          Heritage Homestay in Madikeri
+        </h2>
+        <p className="hero-description hero-animate hero-subtext">
+          Stay at a beautifully preserved 175-year-old heritage cottage in Kadagadalu, Madikeri,
+          surrounded by misty coffee plantations, breathtaking hill views, authentic Coorg
+          hospitality, and modern comforts for a truly memorable plantation stay.
         </p>
       </div>
       <div className="scroll-indicator" aria-hidden="true">

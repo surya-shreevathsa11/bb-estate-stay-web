@@ -3,6 +3,7 @@ import { gsap } from 'gsap'
 import Button from '../components/Button'
 import Container from '../components/Container'
 import SignInModal from '../components/SignInModal'
+import { useCart } from '../hooks/useCart'
 import { useDeviceCapabilities } from '../hooks/useDeviceCapabilities'
 import { useGuestAuth } from '../hooks/useGuestAuth'
 import brandLogo from '../assets/bb-estate-stay-logo.jpeg'
@@ -26,6 +27,9 @@ function Navbar() {
     open: authOpen,
     step,
     status,
+    googleStatus,
+    googleButtonRef,
+    googleClientConfigured,
     message,
     form,
     signedIn,
@@ -37,6 +41,13 @@ function Navbar() {
     verifyPin,
     signOut,
   } = useGuestAuth()
+  const { itemCount } = useCart()
+
+  useEffect(() => {
+    const openSignIn = () => openModal()
+    window.addEventListener('open-guest-signin', openSignIn)
+    return () => window.removeEventListener('open-guest-signin', openSignIn)
+  }, [openModal])
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30)
@@ -122,6 +133,11 @@ function Navbar() {
               className={activeSection === link.id ? 'active' : ''}
             >
               {link.label}
+              {link.id === 'booking' && signedIn && itemCount > 0 ? (
+                <span className="nav-cart-badge" aria-label={`${itemCount} items in cart`}>
+                  {itemCount}
+                </span>
+              ) : null}
             </a>
           ))}
         </nav>
@@ -159,6 +175,11 @@ function Navbar() {
             onClick={() => setOpen(false)}
           >
             {link.label}
+            {link.id === 'booking' && signedIn && itemCount > 0 ? (
+              <span className="nav-cart-badge" aria-label={`${itemCount} items in cart`}>
+                {itemCount}
+              </span>
+            ) : null}
           </a>
         ))}
         {signedIn ? (
@@ -189,6 +210,9 @@ function Navbar() {
         open={authOpen}
         step={step}
         status={status}
+        googleStatus={googleStatus}
+        googleButtonRef={googleButtonRef}
+        googleClientConfigured={googleClientConfigured}
         message={message}
         form={form}
         canSubmit={canSubmit}

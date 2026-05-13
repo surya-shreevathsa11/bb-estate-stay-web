@@ -107,20 +107,12 @@ function About() {
     <SectionWrapper id="about" title="The Story of BB Estate" tone="parchment" grain>
       <div className="about-grid" ref={aboutRef}>
         <article>
-          <p className="eyebrow">EST. IN THE HILLS OF COORG</p>
           <p>
-            Nestled within 12 acres of a working coffee and spice estate, BB
-            Estate Stay has been the family home of the Belliappa family for
-            three generations.
+          Our homestay in Kadagadalu, Madikeri, is a 175 year old ancestral cottage surrounded by coffee plantations and peaceful hill views. For generations, this home has welcomed family and friends with warmth, simplicity, and traditional Coorg hospitality.
           </p>
           <p>
-            What began as a private retreat amid the cardamom-scented hills of
-            Kodagu has now quietly opened its doors to travellers who seek
-            something real.
+          Today, we host travellers looking for a calm and comfortable plantation stay in Coorg with the charm of a heritage home and the convenience of modern amenities. Whether you want to enjoy the fresh plantation air, explore estate life, or simply relax away from the city, our homestay offers a quiet, memorable, and refreshing experience close to nature.
           </p>
-          <a href="#booking" className="story-link">
-            Learn Our Story
-          </a>
         </article>
         <div className="about-images">
           <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=1400&auto=format&fit=crop" alt="Estate view" />
