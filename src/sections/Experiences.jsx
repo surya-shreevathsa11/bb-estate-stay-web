@@ -22,25 +22,25 @@ const experiences = [
     title: 'Coorg Meals',
     description:
       'Enjoy traditional homemade Coorg food prepared with local flavours and spices. Freshly cooked meals bring the warmth of local hospitality to your stay.',
-    image: 'https://images.unsplash.com/photo-1498837167922-ddd27525d352?q=80&w=2000&auto=format&fit=crop',
+    image: '/meal.png',
   },
   {
     title: 'Bonfire Nights',
     description:
-      'Cool mountain air, soft firelight, and open skies.\nThe night closes gently with warmth and stories.',
-    image: 'https://images.unsplash.com/photo-1475483768296-6163e08872a1?q=80&w=2000&auto=format&fit=crop',
+      'Enjoy peaceful bonfire evenings under the cool skies of Madikeri, Coorg with mountain air, open spaces, and memorable nights in nature.',
+    image: '/bonfire.png',
   },
   {
     title: 'Bird Watching',
     description:
       'Experience peaceful bird watching in the coffee plantations and hills of Madikeri where morning sounds, fresh air, and the beauty of Coorg nature surround you.',
-    image: 'https://images.unsplash.com/photo-1444464666168-49d633b86797?q=80&w=2000&auto=format&fit=crop',
+    image: '/bird-watching.png',
   },
   {
     title: 'Estate to Cup',
     description:
       'Experience the journey from fresh coffee cherries to authentic Coorg coffee grown in the plantations of Madikeri and crafted with care at every step.',
-    image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2000&auto=format&fit=crop',
+    image: '/coffee-cup.png',
   },
 ]
 
