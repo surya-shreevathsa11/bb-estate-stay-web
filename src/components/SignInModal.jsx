@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom'
 import Button from './Button'
 import Input from './Input'
 
@@ -30,7 +31,7 @@ function SignInModal({
   const pinBusy = status === 'loading'
   const googleBusy = googleStatus === 'loading'
 
-  return (
+  return createPortal(
     <div className="modal-backdrop" role="presentation" onClick={onClose}>
       <section
         className="signin-modal"
@@ -116,7 +117,8 @@ function SignInModal({
           </div>
         </form>
       </section>
-    </div>
+    </div>,
+    document.body,
   )
 }
 

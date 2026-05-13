@@ -1,10 +1,10 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import SectionWrapper from '../components/SectionWrapper'
 import Button from '../components/Button'
 import { useAvailability } from '../hooks/useAvailability'
 import { useGuestAuth } from '../hooks/useGuestAuth'
 import { useCart } from '../hooks/useCart'
-import { addCartItem, getGuestToken } from '../services/api'
+import { addCartItem, getGuestToken, requestPublicQuote } from '../services/api'
 
 function formatInr(n) {
   if (n == null || Number.isNaN(Number(n))) return '—'
@@ -19,8 +19,11 @@ function RoomStayForm({ room }) {
   const minAdults = Math.min(Math.max(1, Number(cap.minAdults) || 1), maxAdults)
   const maxChildren = Math.max(0, Number(cap.maxChildren) || 0)
   const maxTotal = Math.max(minAdults, Number(cap.maxTotal) || maxAdults + maxChildren)
+  const roomId = room.roomId ?? room.id
 
   const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
+  const [expandForm, setExpandForm] = useState(false)
+  const [pendingOpenForm, setPendingOpenForm] = useState(false)
   const [checkIn, setCheckIn] = useState('')
   const [checkOut, setCheckOut] = useState('')
   const [adults, setAdults] = useState(String(Math.min(2, maxAdults)))
@@ -43,7 +46,32 @@ function RoomStayForm({ room }) {
     return opts
   }, [maxChildren])
 
-  const addToCart = async () => {
+  useEffect(() => {
+    if (signedIn && pendingOpenForm) {
+      setExpandForm(true)
+      setPendingOpenForm(false)
+    }
+  }, [signedIn, pendingOpenForm])
+
+  const onAddToCartClick = () => {
+    setMessage('')
+    setStatus('idle')
+    if (!signedIn) {
+      setPendingOpenForm(true)
+      window.dispatchEvent(new Event('open-guest-signin'))
+      return
+    }
+    setExpandForm(true)
+  }
+
+  const collapseForm = () => {
+    setExpandForm(false)
+    setPendingOpenForm(false)
+    setMessage('')
+    setStatus('idle')
+  }
+
+  const checkAvailabilityAndAdd = async () => {
     setMessage('')
     if (!signedIn) {
       setStatus('error')
@@ -74,25 +102,28 @@ function RoomStayForm({ room }) {
       return
     }
 
+    const stayPayload = {
+      roomId,
+      checkIn,
+      checkOut,
+      adults: adultsNum,
+      children: childrenNum,
+    }
+
     setStatus('loading')
     try {
-      await addCartItem(
-        {
-          roomId: room.roomId,
-          checkIn,
-          checkOut,
-          adults: adultsNum,
-          children: childrenNum,
-        },
-        token,
-      )
+      await requestPublicQuote(stayPayload)
+      await addCartItem(stayPayload, token)
       setStatus('success')
-      setMessage('Added to cart. Review and pay under Reserve.')
+      setMessage('Added to cart.')
       refresh()
       window.dispatchEvent(new Event('cart-updated'))
     } catch (err) {
       setStatus('error')
-      setMessage(err.message || 'Could not add to cart.')
+      setMessage(
+        err.message ||
+          'This room is not available for the selected dates, or the request could not be completed.',
+      )
     }
   }
 
@@ -102,51 +133,68 @@ function RoomStayForm({ room }) {
         <span className="room-price">{formatInr(room.price)}</span>
         <span className="room-price-unit"> / night</span>
       </p>
-      <div className="room-date-row">
-        <label className="room-field">
-          <span>Check-in</span>
-          <input
-            type="date"
-            min={today}
-            value={checkIn}
-            onChange={(e) => setCheckIn(e.target.value)}
-          />
-        </label>
-        <label className="room-field">
-          <span>Check-out</span>
-          <input
-            type="date"
-            min={checkIn || today}
-            value={checkOut}
-            onChange={(e) => setCheckOut(e.target.value)}
-          />
-        </label>
-      </div>
-      <div className="room-guest-row">
-        <label className="room-field">
-          <span>Adults</span>
-          <select value={adults} onChange={(e) => setAdults(e.target.value)}>
-            {adultOptions.map((n) => (
-              <option key={n} value={String(n)}>
-                {n}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="room-field">
-          <span>Children</span>
-          <select value={children} onChange={(e) => setChildren(e.target.value)}>
-            {childOptions.map((n) => (
-              <option key={n} value={String(n)}>
-                {n}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
-      <Button type="button" variant="primary" className="room-add-cart" onClick={addToCart} disabled={status === 'loading'}>
-        {status === 'loading' ? 'Adding…' : 'Add to cart'}
-      </Button>
+      {!expandForm ? (
+        <Button type="button" variant="primary" className="room-add-cart" onClick={onAddToCartClick}>
+          Add to cart
+        </Button>
+      ) : (
+        <>
+          <div className="room-date-row">
+            <label className="room-field">
+              <span>Check-in</span>
+              <input
+                type="date"
+                min={today}
+                value={checkIn}
+                onChange={(e) => setCheckIn(e.target.value)}
+              />
+            </label>
+            <label className="room-field">
+              <span>Check-out</span>
+              <input
+                type="date"
+                min={checkIn || today}
+                value={checkOut}
+                onChange={(e) => setCheckOut(e.target.value)}
+              />
+            </label>
+          </div>
+          <div className="room-guest-row">
+            <label className="room-field">
+              <span>Adults</span>
+              <select value={adults} onChange={(e) => setAdults(e.target.value)}>
+                {adultOptions.map((n) => (
+                  <option key={n} value={String(n)}>
+                    {n}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="room-field">
+              <span>Children</span>
+              <select value={children} onChange={(e) => setChildren(e.target.value)}>
+                {childOptions.map((n) => (
+                  <option key={n} value={String(n)}>
+                    {n}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <Button
+            type="button"
+            variant="primary"
+            className="room-add-cart"
+            onClick={checkAvailabilityAndAdd}
+            disabled={status === 'loading'}
+          >
+            {status === 'loading' ? 'Checking & adding…' : 'Check availability & add to cart'}
+          </Button>
+          <button type="button" className="room-form-cancel" onClick={collapseForm}>
+            Cancel
+          </button>
+        </>
+      )}
       {message && (
         <p className={`form-message ${status === 'success' ? 'ok' : 'error'}`}>{message}</p>
       )}
@@ -171,18 +219,10 @@ function Rooms() {
             const banner =
               room.images?.banner ||
               'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200&auto=format&fit=crop'
-            const gallery = Array.isArray(room.images?.gallery) ? room.images.gallery : []
             return (
               <article key={room.id || room.roomId || index} className="room-card room-card--media">
                 <div className="room-card-media">
                   <img src={banner} alt="" className="room-card-banner" loading="lazy" />
-                  {gallery.length > 0 && (
-                    <div className="room-card-gallery" aria-hidden="true">
-                      {gallery.slice(0, 4).map((src) => (
-                        <img key={src} src={src} alt="" loading="lazy" />
-                      ))}
-                    </div>
-                  )}
                 </div>
                 <div className="room-card-body">
                   <h3>{room.name || `Room ${index + 1}`}</h3>
