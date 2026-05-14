@@ -12,6 +12,8 @@ import {
   removeCartItem,
 } from '../services/api'
 
+const EMPTY_ROOM_LINES = []
+
 const TERMS_BULLETS = [
   '100% refund for cancellations made 15+ days before check-in. No refund after.',
   'Cancellation requests must be made through admin.',
@@ -52,6 +54,30 @@ function filterPrimaryPrepaidOptions(options) {
       (typeof o?.label === 'string' && o.label.toLowerCase() === 'primary'),
   )
   return primary.length > 0 ? primary : []
+}
+
+function getCheckoutPrepaidFields(lines, cart) {
+  let prepaidOptionId = 'primary'
+  let prepaidPercent = cart?.upperPercent ?? cart?.lowerPercent ?? null
+
+  for (const row of lines) {
+    const prepaidAll = Array.isArray(row.prepaidOptions) ? row.prepaidOptions : []
+    const primary = filterPrimaryPrepaidOptions(prepaidAll)
+    const opt = primary[0]
+    if (opt?.id != null && prepaidOptionId === 'primary') {
+      prepaidOptionId = String(opt.id)
+    }
+    if (prepaidPercent == null && opt?.percent != null) {
+      prepaidPercent = opt.percent
+    }
+  }
+
+  if (prepaidPercent == null) prepaidPercent = 30
+  const n = Number(prepaidPercent)
+  return {
+    prepaidOptionId,
+    prepaidPercent: Number.isFinite(n) ? n : 30,
+  }
 }
 
 function unwrapPayload(data) {
@@ -119,7 +145,13 @@ function isValidPhone(s) {
   return digits.length >= 10
 }
 
-function CheckoutFlowModal({ open, onClose, onPaid }) {
+function CheckoutFlowModal({
+  open,
+  onClose,
+  onPaid,
+  prepaidOptionId = 'primary',
+  prepaidPercent = 30,
+}) {
   const [step, setStep] = useState('contact')
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
@@ -175,11 +207,12 @@ function CheckoutFlowModal({ open, onClose, onPaid }) {
     try {
       const raw = await createGuestPaymentOrder(
         {
-          fullName: fullName.trim(),
           email: email.trim(),
+          name: fullName.trim(),
           phone: phone.trim(),
+          prepaidOptionId,
+          prepaidPercent,
           termsAcceptedAt: new Date().toISOString(),
-          prepaidPlan: 'primary',
         },
         token,
       )
@@ -235,7 +268,7 @@ function CheckoutFlowModal({ open, onClose, onPaid }) {
     } finally {
       setBusy(false)
     }
-  }, [accepted, fullName, email, phone, onClose, onPaid])
+  }, [accepted, fullName, email, phone, prepaidOptionId, prepaidPercent, onClose, onPaid])
 
   if (!open) return null
 
@@ -363,7 +396,14 @@ function CheckoutFlowModal({ open, onClose, onPaid }) {
 function CartPage() {
   const { cart, loading, error, refresh } = useCart()
   const { signedIn } = useGuestAuth()
-  const lines = Array.isArray(cart?.roomInfo) ? cart.roomInfo : []
+  const lines = useMemo(() => {
+    const ri = cart?.roomInfo
+    return Array.isArray(ri) ? ri : EMPTY_ROOM_LINES
+  }, [cart?.roomInfo])
+  const checkoutPrepaid = useMemo(
+    () => getCheckoutPrepaidFields(lines, cart),
+    [lines, cart],
+  )
   const [checkoutOpen, setCheckoutOpen] = useState(false)
   const [checkoutKey, setCheckoutKey] = useState(0)
   const [removingKey, setRemovingKey] = useState(null)
@@ -593,6 +633,8 @@ function CartPage() {
         open={checkoutOpen}
         onClose={() => setCheckoutOpen(false)}
         onPaid={() => void refresh()}
+        prepaidOptionId={checkoutPrepaid.prepaidOptionId}
+        prepaidPercent={checkoutPrepaid.prepaidPercent}
       />
     </>
   )
