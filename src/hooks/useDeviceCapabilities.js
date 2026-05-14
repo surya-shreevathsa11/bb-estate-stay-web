@@ -18,5 +18,5 @@ function detectCapabilities() {
 }
 
 export function useDeviceCapabilities() {
-  return useMemo(detectCapabilities, [])
+  return useMemo(() => detectCapabilities(), [])
 }

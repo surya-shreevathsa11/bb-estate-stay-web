@@ -28,18 +28,10 @@ function cartIcon() {
   )
 }
 
-function formatCartDate(value) {
-  if (value == null || value === '') return '—'
-  const s = String(value)
-  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10)
-  return s
-}
-
 function Navbar() {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState('about')
-  const [cartPanelOpen, setCartPanelOpen] = useState(false)
   const menuRef = useRef(null)
   const { reducedMotion } = useDeviceCapabilities()
   const {
@@ -60,7 +52,7 @@ function Navbar() {
     verifyPin,
     signOut,
   } = useGuestAuth()
-  const { itemCount, cart, loading: cartLoading, error: cartError, refresh } = useCart()
+  const { itemCount, refresh } = useCart()
 
   useEffect(() => {
     const openSignIn = () => openModal()
@@ -69,26 +61,13 @@ function Navbar() {
   }, [openModal])
 
   useEffect(() => {
-    if (authOpen) setCartPanelOpen(false)
-  }, [authOpen])
-
-  useEffect(() => {
-    const lockScroll = open || authOpen || cartPanelOpen
+    const lockScroll = open || authOpen
     const prev = document.body.style.overflow
     document.body.style.overflow = lockScroll ? 'hidden' : ''
     return () => {
       document.body.style.overflow = prev
     }
-  }, [open, authOpen, cartPanelOpen])
-
-  useEffect(() => {
-    if (!cartPanelOpen) return undefined
-    const onKey = (e) => {
-      if (e.key === 'Escape') setCartPanelOpen(false)
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [cartPanelOpen])
+  }, [open, authOpen])
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30)
@@ -152,18 +131,14 @@ function Navbar() {
     }
   }, [open, reducedMotion])
 
-  const openCartPanel = () => {
+  const openCart = () => {
     if (!signedIn) {
       openModal()
       return
     }
-    setCartPanelOpen(true)
+    window.location.hash = '#cart'
     void refresh()
   }
-
-  const closeCartPanel = () => setCartPanelOpen(false)
-
-  const lines = Array.isArray(cart?.roomInfo) ? cart.roomInfo : []
 
   return (
     <header className={`site-nav ${scrolled ? 'scrolled' : ''}`}>
@@ -187,9 +162,8 @@ function Navbar() {
           <button
             type="button"
             className="nav-cart-toggle"
-            onClick={openCartPanel}
-            aria-label={signedIn ? 'View cart' : 'View cart — sign in required'}
-            aria-expanded={cartPanelOpen}
+            onClick={openCart}
+            aria-label={signedIn ? 'Open cart page' : 'View cart — sign in required'}
           >
             {cartIcon()}
             {itemCount > 0 ? (
@@ -236,7 +210,7 @@ function Navbar() {
           className="mobile-menu-cart"
           onClick={() => {
             setOpen(false)
-            openCartPanel()
+            openCart()
           }}
         >
           <span className="mobile-menu-cart-inner">
@@ -269,76 +243,6 @@ function Navbar() {
           </Button>
         )}
       </div>
-
-      <div
-        className={`nav-cart-panel-backdrop ${cartPanelOpen ? 'open' : ''}`}
-        role="presentation"
-        aria-hidden={!cartPanelOpen}
-        onClick={closeCartPanel}
-      />
-      <aside
-        className={`nav-cart-panel ${cartPanelOpen ? 'open' : ''}`}
-        aria-hidden={!cartPanelOpen}
-        aria-label="Your cart"
-      >
-        <div className="nav-cart-panel-header">
-          <h2 className="nav-cart-panel-title">Your cart</h2>
-          <button type="button" className="nav-cart-panel-close" onClick={closeCartPanel} aria-label="Close cart">
-            ×
-          </button>
-        </div>
-        <div className="nav-cart-panel-body">
-          {!signedIn ? (
-            <p className="nav-cart-panel-empty">Sign in with Google or email to view your cart.</p>
-          ) : cartLoading ? (
-            <p className="nav-cart-panel-empty">Loading cart…</p>
-          ) : cartError ? (
-            <p className="form-message error">{cartError}</p>
-          ) : lines.length === 0 ? (
-            <p className="nav-cart-panel-empty">No rooms in your cart yet.</p>
-          ) : (
-            <ul className="nav-cart-lines">
-              {lines.map((row, idx) => {
-                const name =
-                  row.roomName ||
-                  row.name ||
-                  row.room?.name ||
-                  row.room?.roomName ||
-                  `Room ${idx + 1}`
-                const checkIn = formatCartDate(row.checkIn ?? row.startDate ?? row.check_in)
-                const checkOut = formatCartDate(row.checkOut ?? row.endDate ?? row.check_out)
-                const adults = row.adults ?? row.adultCount
-                const children = row.children ?? row.childCount
-                return (
-                  <li key={row.id ?? row.cartItemId ?? row.roomId ?? idx} className="nav-cart-line">
-                    <div className="nav-cart-line-title">{name}</div>
-                    <dl className="nav-cart-line-meta">
-                      <div>
-                        <dt>Check-in</dt>
-                        <dd>{checkIn}</dd>
-                      </div>
-                      <div>
-                        <dt>Check-out</dt>
-                        <dd>{checkOut}</dd>
-                      </div>
-                      {(adults != null || children != null) && (
-                        <div className="nav-cart-line-guests">
-                          <dt>Guests</dt>
-                          <dd>
-                            {adults != null ? `${adults} adult${adults === 1 ? '' : 's'}` : ''}
-                            {adults != null && children != null ? ', ' : ''}
-                            {children != null ? `${children} child${children === 1 ? '' : 'ren'}` : ''}
-                          </dd>
-                        </div>
-                      )}
-                    </dl>
-                  </li>
-                )
-              })}
-            </ul>
-          )}
-        </div>
-      </aside>
 
       <SignInModal
         open={authOpen}

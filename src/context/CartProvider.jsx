@@ -2,6 +2,20 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { CartContext } from './cartContext.js'
 import { getCart as fetchCartApi, getGuestToken } from '../services/api'
 
+function unwrapCartPayload(data) {
+  if (data == null || typeof data !== 'object') return data
+  if (Array.isArray(data.roomInfo) || data.totalPrice != null) return data
+  const inner = data.data
+  if (
+    inner &&
+    typeof inner === 'object' &&
+    (Array.isArray(inner.roomInfo) || inner.totalPrice != null || inner.lowerPayableTotal != null)
+  ) {
+    return inner
+  }
+  return data
+}
+
 export function CartProvider({ children }) {
   const [cart, setCart] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -17,7 +31,7 @@ export function CartProvider({ children }) {
     setLoading(true)
     try {
       const data = await fetchCartApi(token)
-      setCart(data)
+      setCart(unwrapCartPayload(data))
       setError('')
     } catch (err) {
       setCart(null)

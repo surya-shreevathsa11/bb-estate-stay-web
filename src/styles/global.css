@@ -22,7 +22,7 @@ body {
   font-size: var(--font-size-body);
   background: var(--color-parchment);
   color: var(--color-ink);
-  line-height: 1.85;
+  line-height: 1.8;
 }
 
 p {
@@ -58,7 +58,7 @@ a {
 }
 
 .section-header {
-  margin-bottom: 48px;
+  margin-bottom: 40px;
 }
 
 .section-subtitle {

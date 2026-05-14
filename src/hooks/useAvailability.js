@@ -21,7 +21,10 @@ export function useAvailability() {
   }, [])
 
   useEffect(() => {
-    fetchRooms()
+    const t = window.setTimeout(() => {
+      void fetchRooms()
+    }, 0)
+    return () => window.clearTimeout(t)
   }, [fetchRooms])
 
   return { rooms, loading, error, refetch: fetchRooms }

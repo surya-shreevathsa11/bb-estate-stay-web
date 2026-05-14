@@ -1,9 +1,20 @@
 import SectionWrapper from '../components/SectionWrapper'
 
 const reviews = [
-  'Waking up to mist over the coffee rows and a steaming cup of estate-grown filter coffee brought to the verandah.',
-  'The family made us feel like we had known them forever. We have already planned our return.',
-  'No noise, no crowds - just the estate, the birds, and your own thoughts.',
+  {
+    name: 'Sheetal',
+    date: null,
+    text: 'It was exactly like photos, very clean and aesthetic with peaceful surroundings. Madan was very responsive, gave clear instructions about everything and made our stay very comfortable.',
+  },
+  {
+    name: 'Puneet',
+    date: null,
+    text: 'Madan and Anita were great host. They were proactive in communication, and the place is just perfect for a nature retreat in the Coffee Estate. The stay comes with a complimentary breakfast, which is home cooked and very well done. The house help was also very helping and courteous. We would love to come again.',
+  },
+  {
+    name: 'Smita',
+    text: 'The 200 year old place was amazingly beautiful. Superbly maintained and squeaky clean. The hosts were amazing and meeting them were like meeting old friends. The care taker Akka was super sweet. Overall the place is well-maintained and perfect for a peaceful getaway.',
+  },
 ]
 
 function Reviews() {
@@ -17,9 +28,12 @@ function Reviews() {
     >
       <div className="reviews-row">
         {reviews.map((review) => (
-          <article key={review} className="review-card">
-            <p>{review}</p>
-            <strong>★★★★★</strong>
+          <article key={review.name} className="review-card">
+            <p className="review-card-text">{review.text}</p>
+            <footer className="review-card-footer">
+              <span className="review-card-name">{review.name}</span>
+              {review.date ? <span className="review-card-date">{review.date}</span> : null}
+            </footer>
           </article>
         ))}
       </div>
