@@ -1250,6 +1250,14 @@ body:has(main.cart-page) .site-nav:not(.scrolled) .menu-toggle span {
   border-top: 1px solid var(--color-gold);
 }
 
+#policies .section-header {
+  text-align: center;
+}
+
+#policies .policy-list {
+  text-align: center;
+}
+
 .policy-item {
   border-bottom: 1px solid var(--color-gold);
 }
@@ -1261,11 +1269,19 @@ body:has(main.cart-page) .site-nav:not(.scrolled) .menu-toggle span {
   border: 0;
   padding: 16px 0;
   font-family: var(--font-heading-family);
-  font-size: var(--font-size-heading);
-  font-weight: 300;
+  font-size: clamp(1.25rem, 2.2vw, 1.5rem);
+  font-weight: 500;
   letter-spacing: 0.04em;
   line-height: 1.12;
   cursor: pointer;
+}
+
+#policies .policy-item button {
+  text-align: center;
+}
+
+#policies .policy-item p {
+  text-align: center;
 }
 
 .policy-item p {
@@ -1349,6 +1365,8 @@ body:has(main.cart-page) .site-nav:not(.scrolled) .menu-toggle span {
   justify-content: center;
   gap: 10px;
   margin: 0;
+  font-size: clamp(1.25rem, 2.2vw, 1.5rem);
+  font-weight: 500;
 }
 
 .footer-tagline {
@@ -1609,7 +1627,9 @@ body:has(main.cart-page) .site-nav:not(.scrolled) .menu-toggle span {
   align-items: center;
   justify-content: center;
   padding: max(16px, env(safe-area-inset-top, 0px)) 16px 16px;
-  background: rgba(28, 22, 18, 0.48);
+  background: rgba(12, 10, 8, 0.58);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   box-sizing: border-box;
 }
 
@@ -1619,10 +1639,13 @@ body:has(main.cart-page) .site-nav:not(.scrolled) .menu-toggle span {
   overflow-y: auto;
   padding: clamp(20px, 4vw, 28px);
   border-radius: 12px;
-  border: 1px solid var(--color-gold);
+  border: 2px solid rgb(28 18 8 / 22%);
   background: var(--color-cream);
   color: var(--color-ink);
-  box-shadow: 0 20px 48px rgba(28, 18, 8, 0.18);
+  box-shadow:
+    0 0 0 1px rgb(232 212 180 / 0.9),
+    0 28px 72px rgba(12, 8, 4, 0.38),
+    0 12px 28px rgba(28, 18, 8, 0.12);
 }
 
 .room-booking-modal-header {
@@ -1637,7 +1660,7 @@ body:has(main.cart-page) .site-nav:not(.scrolled) .menu-toggle span {
   margin: 0;
   font-family: var(--font-heading-family);
   font-size: clamp(1.25rem, 2.4vw, 1.45rem);
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.03em;
   line-height: 1.2;
   color: var(--color-ink);
@@ -1667,7 +1690,8 @@ body:has(main.cart-page) .site-nav:not(.scrolled) .menu-toggle span {
   margin: 0 0 16px;
   font-size: var(--font-size-body);
   line-height: 1.65;
-  color: rgb(28 18 8 / 72%);
+  color: rgb(28 18 8 / 88%);
+  font-weight: 500;
 }
 
 .room-booking-modal-quote {
@@ -1675,6 +1699,48 @@ body:has(main.cart-page) .site-nav:not(.scrolled) .menu-toggle span {
   font-size: var(--font-size-body);
   line-height: 1.5;
   color: var(--color-estate);
+}
+
+.room-booking-modal .room-field {
+  color: rgb(28 18 8 / 88%);
+  font-weight: 600;
+  letter-spacing: 0.07em;
+}
+
+.room-booking-modal .room-field input,
+.room-booking-modal .room-field select {
+  border: 1px solid rgb(28 18 8 / 22%);
+  font-weight: 500;
+  color: rgb(28 18 8 / 96%);
+}
+
+.room-booking-availability-banner {
+  margin: 8px 0 18px;
+  padding: 14px 16px;
+  border-radius: 8px;
+  font-family: var(--font-body-family);
+  font-size: clamp(0.98rem, 1.65vw, 1.08rem);
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  color: #fff;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
+  -webkit-font-smoothing: antialiased;
+}
+
+.room-booking-availability-banner--available {
+  background: linear-gradient(135deg, #1a3f78 0%, #2563c4 55%, #2f6fc9 100%);
+  box-shadow: 0 4px 16px rgba(18, 56, 110, 0.42);
+}
+
+.room-booking-availability-banner--unavailable {
+  background: linear-gradient(135deg, #6e2218 0%, #9a3412 45%, #b45309 100%);
+  box-shadow: 0 4px 16px rgba(110, 40, 12, 0.4);
+}
+
+.room-booking-availability-banner--loading {
+  background: linear-gradient(135deg, #334155 0%, #475569 55%, #64748b 100%);
+  box-shadow: 0 4px 14px rgba(30, 41, 59, 0.38);
 }
 
 .room-booking-modal-actions {
@@ -1931,7 +1997,9 @@ body:has(main.cart-page) .site-nav:not(.scrolled) .menu-toggle span {
   align-items: center;
   justify-content: center;
   padding: max(16px, env(safe-area-inset-top, 0px)) 16px 16px;
-  background: rgba(28, 22, 18, 0.5);
+  background: rgba(12, 10, 8, 0.58);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   box-sizing: border-box;
 }
 
@@ -1941,10 +2009,13 @@ body:has(main.cart-page) .site-nav:not(.scrolled) .menu-toggle span {
   display: flex;
   flex-direction: column;
   border-radius: 12px;
-  border: 1px solid var(--color-gold);
+  border: 2px solid rgb(28 18 8 / 22%);
   background: var(--color-cream);
   color: var(--color-ink);
-  box-shadow: 0 20px 48px rgba(28, 18, 8, 0.2);
+  box-shadow:
+    0 0 0 1px rgb(232 212 180 / 0.9),
+    0 28px 72px rgba(12, 8, 4, 0.38),
+    0 12px 28px rgba(28, 18, 8, 0.12);
 }
 
 .checkout-terms-modal-header {
@@ -1960,7 +2031,7 @@ body:has(main.cart-page) .site-nav:not(.scrolled) .menu-toggle span {
   margin: 0;
   font-family: var(--font-heading-family);
   font-size: clamp(1.2rem, 2.2vw, 1.45rem);
-  font-weight: 500;
+  font-weight: 600;
   color: var(--color-ink);
 }
 
@@ -2065,6 +2136,28 @@ body:has(main.cart-page) .site-nav:not(.scrolled) .menu-toggle span {
   font-size: 12px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  color: rgb(28 18 8 / 72%);
+  font-weight: 600;
+}
+
+.checkout-terms-modal .checkout-contact-stack .form-field > span {
+  color: rgb(28 18 8 / 92%);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+
+.checkout-terms-modal .checkout-contact-stack .form-field input {
+  border-bottom-width: 2px;
+  border-bottom-color: rgb(28 18 8 / 32%);
+  font-weight: 500;
+  color: rgb(28 18 8 / 96%);
+}
+
+.checkout-terms-modal .checkout-contact-stack .form-field input:focus {
+  border-bottom-color: var(--color-copper);
+}
+
+.checkout-terms-modal .checkout-contact-stack .form-field input:disabled {
   color: rgb(28 18 8 / 55%);
 }
 

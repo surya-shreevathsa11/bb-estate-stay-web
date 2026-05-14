@@ -47,6 +47,55 @@ async function fetchStayQuote(payload, token) {
   return requestPublicQuote(payload)
 }
 
+function unwrapQuoteResponse(data) {
+  if (data && typeof data === 'object' && data.data != null && typeof data.data === 'object') {
+    return data.data
+  }
+  return data
+}
+
+function isQuoteUnavailable(quote) {
+  if (!quote || typeof quote !== 'object') return false
+  if (quote.available === false || quote.isAvailable === false) return true
+  const s = String(quote.status ?? quote.availability ?? '').toLowerCase()
+  return s === 'unavailable' || s === 'sold_out' || s === 'sold out' || s === 'full'
+}
+
+/** One-line copy for the room modal; full breakdown stays on the cart page. */
+function summarizeQuoteForAvailabilityBanner(quote) {
+  if (!quote || typeof quote !== 'object') return ''
+  const direct =
+    (typeof quote.message === 'string' && quote.message.trim()) ||
+    (typeof quote.availabilityMessage === 'string' && quote.availabilityMessage.trim()) ||
+    (typeof quote.hint === 'string' && quote.hint.trim())
+  if (direct) return direct
+
+  if (isQuoteUnavailable(quote)) {
+    return 'This room is not available for the selected dates. Try other dates or another room.'
+  }
+
+  const primaryId = quote.primaryPrepaidOptionId
+  const opts = Array.isArray(quote.prepaidOptions) ? quote.prepaidOptions : []
+  const primaryOpt =
+    opts.find((o) => o && (o.isPrimary || String(o.id) === String(primaryId))) ||
+    opts.find((o) => o && String(o.id) === String(primaryId))
+  const payNow =
+    primaryOpt?.prepaidAmount != null
+      ? primaryOpt.prepaidAmount
+      : quote.prepaidAmount != null
+        ? quote.prepaidAmount
+        : null
+  const total = quote.price
+
+  if (total != null && payNow != null) {
+    return `Available — total stay ${formatInr(total)}, payable now (primary) ${formatInr(payNow)}. Find the full breakdown in your cart.`
+  }
+  if (total != null) {
+    return `Available — total stay ${formatInr(total)}. Find the full breakdown in your cart.`
+  }
+  return 'These dates look available. Add this room to your cart — find the full breakdown there.'
+}
+
 function RoomCardCta({ room, onAddClick }) {
   return (
     <div className="room-booking-block">
@@ -78,7 +127,9 @@ function RoomBookingModal({ room, open, onClose }) {
   const [children, setChildren] = useState('0')
   const [status, setStatus] = useState('idle')
   const [message, setMessage] = useState('')
-  const [quoteHint, setQuoteHint] = useState('')
+  const [dateQuote, setDateQuote] = useState(null)
+  const [dateQuoteLoading, setDateQuoteLoading] = useState(false)
+  const [dateQuoteError, setDateQuoteError] = useState('')
 
   const adultsNum = Number(adults) || minAdults
   const childrenNum = Number(children) || 0
@@ -94,6 +145,18 @@ function RoomBookingModal({ room, open, onClose }) {
     for (let c = 0; c <= maxChildren; c += 1) opts.push(c)
     return opts
   }, [maxChildren])
+
+  const availabilityBannerText = useMemo(() => {
+    if (dateQuoteLoading || dateQuoteError) return ''
+    return summarizeQuoteForAvailabilityBanner(dateQuote)
+  }, [dateQuote, dateQuoteLoading, dateQuoteError])
+
+  const availabilityBannerTone = useMemo(() => {
+    if (dateQuoteLoading) return 'loading'
+    if (dateQuoteError) return 'unavailable'
+    if (dateQuote && typeof dateQuote === 'object' && isQuoteUnavailable(dateQuote)) return 'unavailable'
+    return 'available'
+  }, [dateQuoteLoading, dateQuoteError, dateQuote])
 
   useEffect(() => {
     if (!open) return undefined
@@ -113,13 +176,70 @@ function RoomBookingModal({ room, open, onClose }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [open, onClose])
 
+  useEffect(() => {
+    let cancelled = false
+    let clearTimerId = null
+
+    const scheduleClearQuoteState = () => {
+      clearTimerId = window.setTimeout(() => {
+        if (cancelled) return
+        setDateQuote(null)
+        setDateQuoteError('')
+        setDateQuoteLoading(false)
+      }, 0)
+    }
+
+    if (!open || !signedIn || !roomId || !checkIn || !checkOut || checkIn >= checkOut) {
+      scheduleClearQuoteState()
+      return () => {
+        cancelled = true
+        if (clearTimerId != null) window.clearTimeout(clearTimerId)
+      }
+    }
+    const token = getGuestToken()
+    if (!token) {
+      scheduleClearQuoteState()
+      return () => {
+        cancelled = true
+        if (clearTimerId != null) window.clearTimeout(clearTimerId)
+      }
+    }
+
+    const t = window.setTimeout(() => {
+      void (async () => {
+        setDateQuoteLoading(true)
+        setDateQuoteError('')
+        setDateQuote(null)
+        try {
+          const raw = await requestGuestQuote(
+            { roomId: String(roomId), checkIn, checkOut },
+            token,
+          )
+          if (cancelled) return
+          setDateQuote(unwrapQuoteResponse(raw))
+        } catch (err) {
+          if (cancelled) return
+          setDateQuote(null)
+          setDateQuoteError(err?.message || 'Could not check availability for these dates.')
+        } finally {
+          if (!cancelled) setDateQuoteLoading(false)
+        }
+      })()
+    }, 400)
+
+    return () => {
+      cancelled = true
+      window.clearTimeout(t)
+      if (clearTimerId != null) window.clearTimeout(clearTimerId)
+    }
+  }, [open, signedIn, roomId, checkIn, checkOut])
+
   const onBackdropMouseDown = (e) => {
     if (e.target === e.currentTarget) onClose()
   }
 
   const checkAvailabilityAndAdd = async () => {
     setMessage('')
-    setQuoteHint('')
     if (!signedIn) {
       setStatus('error')
       setMessage('Sign in from the navigation bar to add rooms to your cart.')
@@ -159,29 +279,19 @@ function RoomBookingModal({ room, open, onClose }) {
 
     setStatus('loading')
     try {
-      const quote = await fetchStayQuote(stayPayload, token)
-      if (quote && typeof quote === 'object') {
-        const hint =
-          (typeof quote.message === 'string' && quote.message) ||
-          (quote.totalPrice != null && `Quote ready · ${formatInr(quote.totalPrice)} total`) ||
-          (quote.price != null && `From ${formatInr(quote.price)}`) ||
-          'Dates look available.'
-        setQuoteHint(hint)
-      } else {
-        setQuoteHint('Availability confirmed.')
-      }
-
+      await fetchStayQuote(stayPayload, token)
       await addCartItem(stayPayload, token)
       refresh()
       window.dispatchEvent(new Event('cart-updated'))
       onClose()
     } catch (err) {
       setStatus('error')
-      setQuoteHint('')
       setMessage(
         err.message ||
           'This room is not available for the selected dates, or the request could not be completed.',
       )
+    } finally {
+      setStatus('idle')
     }
   }
 
@@ -250,7 +360,17 @@ function RoomBookingModal({ room, open, onClose }) {
             </select>
           </label>
         </div>
-        {quoteHint && status !== 'error' ? <p className="room-booking-modal-quote">{quoteHint}</p> : null}
+        {dateQuoteLoading || dateQuoteError || availabilityBannerText ? (
+          <p
+            className={`room-booking-availability-banner room-booking-availability-banner--${availabilityBannerTone}`}
+            role="status"
+            aria-live="polite"
+          >
+            {dateQuoteLoading
+              ? 'Checking availability for these dates…'
+              : dateQuoteError || availabilityBannerText}
+          </p>
+        ) : null}
         <div className="room-booking-modal-actions">
           <Button
             type="button"
