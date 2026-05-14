@@ -14,7 +14,8 @@ def main() -> None:
   <defs>
     <clipPath id="circleClip"><circle cx="16" cy="16" r="16"/></clipPath>
   </defs>
-  <image width="32" height="32" preserveAspectRatio="xMidYMid slice" clip-path="url(#circleClip)" href="data:image/jpeg;base64,{b64}"/>
+  <circle cx="16" cy="16" r="16" fill="#f5efe0"/>
+  <image width="32" height="32" preserveAspectRatio="xMidYMid meet" clip-path="url(#circleClip)" href="data:image/jpeg;base64,{b64}"/>
 </svg>'''
     OUT.write_text(svg, encoding="utf-8")
     print(f"Wrote {OUT} ({len(svg)} bytes)")
