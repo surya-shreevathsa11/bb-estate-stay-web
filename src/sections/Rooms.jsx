@@ -36,6 +36,40 @@ function formatInr(n) {
   return `₹${Number(n).toLocaleString('en-IN')}`
 }
 
+const ROOM_BANNER_FALLBACK =
+  'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200&auto=format&fit=crop'
+
+function resolveRoomImageUrl(item) {
+  if (item == null) return null
+  if (typeof item === 'string') {
+    const trimmed = item.trim()
+    return trimmed || null
+  }
+  if (typeof item === 'object') {
+    const candidate =
+      item.url ?? item.src ?? item.imageUrl ?? item.image ?? item.path ?? item.href
+    if (typeof candidate === 'string' && candidate.trim()) return candidate.trim()
+  }
+  return null
+}
+
+/** Interior walkthrough slides from Vara `room.images.gallery`, with banner fallback. */
+function getRoomInteriorSlides(room, fallbackBanner = ROOM_BANNER_FALLBACK) {
+  const gallery = room?.images?.gallery
+  const fromGallery = Array.isArray(gallery)
+    ? gallery.map(resolveRoomImageUrl).filter(Boolean)
+    : []
+  const uniqueGallery = [...new Set(fromGallery)]
+  if (uniqueGallery.length) return uniqueGallery
+
+  const banner = resolveRoomImageUrl(room?.images?.banner) || fallbackBanner
+  return banner ? [banner] : []
+}
+
+function roomBannerSrc(room, fallbackBanner = ROOM_BANNER_FALLBACK) {
+  return resolveRoomImageUrl(room?.images?.banner) || fallbackBanner
+}
+
 async function fetchStayQuote(payload, token) {
   if (token) {
     try {
@@ -94,6 +128,138 @@ function summarizeQuoteForAvailabilityBanner(quote) {
     return `Available — total stay ${formatInr(total)}. Find the full breakdown in your cart.`
   }
   return 'These dates look available. Add this room to your cart — find the full breakdown there.'
+}
+
+function RoomGalleryModal({ room, open, onClose }) {
+  const slides = useMemo(() => (room ? getRoomInteriorSlides(room) : []), [room])
+  const [index, setIndex] = useState(0)
+  const touchStartX = useRef(null)
+  const title = room?.name || room?.roomName || 'Room'
+
+  useEffect(() => {
+    if (!open) return undefined
+    setIndex(0)
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = prev
+    }
+  }, [open, room])
+
+  useEffect(() => {
+    if (!open) return undefined
+    const onKey = (e) => {
+      if (e.key === 'Escape') onClose()
+      if (slides.length < 2) return
+      if (e.key === 'ArrowLeft') setIndex((i) => (i - 1 + slides.length) % slides.length)
+      if (e.key === 'ArrowRight') setIndex((i) => (i + 1) % slides.length)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open, onClose, slides.length])
+
+  const onBackdropMouseDown = (e) => {
+    if (e.target === e.currentTarget) onClose()
+  }
+
+  if (!open || !room) return null
+
+  const hasMultiple = slides.length > 1
+  const currentSrc = slides[index]
+
+  const onGalleryTouchStart = (e) => {
+    touchStartX.current = e.touches[0]?.clientX ?? null
+  }
+
+  const onGalleryTouchEnd = (e) => {
+    if (!hasMultiple || touchStartX.current == null) return
+    const endX = e.changedTouches[0]?.clientX
+    if (endX == null) return
+    const delta = endX - touchStartX.current
+    touchStartX.current = null
+    if (Math.abs(delta) < 48) return
+    if (delta < 0) {
+      setIndex((i) => (i + 1) % slides.length)
+    } else {
+      setIndex((i) => (i - 1 + slides.length) % slides.length)
+    }
+  }
+
+  const modal = (
+    <div
+      className="room-gallery-modal-root"
+      role="presentation"
+      onMouseDown={onBackdropMouseDown}
+    >
+      <div
+        className="room-gallery-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="room-gallery-modal-title"
+        onMouseDown={(e) => e.stopPropagation()}
+      >
+        <div className="room-gallery-modal-header">
+          <div>
+            <h2 id="room-gallery-modal-title" className="room-gallery-modal-title">
+              {title}
+            </h2>
+            <p className="room-gallery-modal-lead">Interior walkthrough</p>
+          </div>
+          <button
+            type="button"
+            className="room-gallery-modal-close"
+            onClick={onClose}
+            aria-label="Close gallery"
+          >
+            ×
+          </button>
+        </div>
+
+        {slides.length === 0 ? (
+          <p className="room-gallery-empty">Interior photos for this room will appear here soon.</p>
+        ) : (
+          <>
+            <div
+              className="room-gallery-stage"
+              onTouchStart={onGalleryTouchStart}
+              onTouchEnd={onGalleryTouchEnd}
+            >
+              {hasMultiple ? (
+                <button
+                  type="button"
+                  className="room-gallery-nav room-gallery-nav--prev"
+                  onClick={() => setIndex((i) => (i - 1 + slides.length) % slides.length)}
+                  aria-label="Previous photo"
+                >
+                  ‹
+                </button>
+              ) : null}
+              <div className="room-gallery-main">
+                <img
+                  key={currentSrc}
+                  src={currentSrc}
+                  alt={`${title} interior — photo ${index + 1} of ${slides.length}`}
+                  className="room-gallery-main-img"
+                />
+              </div>
+              {hasMultiple ? (
+                <button
+                  type="button"
+                  className="room-gallery-nav room-gallery-nav--next"
+                  onClick={() => setIndex((i) => (i + 1) % slides.length)}
+                  aria-label="Next photo"
+                >
+                  ›
+                </button>
+              ) : null}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  )
+
+  return createPortal(modal, document.body)
 }
 
 function RoomCardCta({ room, onAddClick }) {
@@ -398,6 +564,7 @@ function Rooms() {
   const { signedIn } = useGuestAuth()
   const [bookingRoom, setBookingRoom] = useState(null)
   const [bookingKey, setBookingKey] = useState(0)
+  const [galleryRoom, setGalleryRoom] = useState(null)
   const pendingRoomRef = useRef(null)
 
   const sorted = useMemo(
@@ -439,6 +606,10 @@ function Rooms() {
     pendingRoomRef.current = null
   }, [])
 
+  const closeGallery = useCallback(() => {
+    setGalleryRoom(null)
+  }, [])
+
   return (
     <SectionWrapper id="rooms" title="Estate Rooms" tone="cream">
       {loading && <p>Loading room inventory...</p>}
@@ -446,18 +617,25 @@ function Rooms() {
       {!loading && !error && (
         <div className="rooms-grid">
           {sorted.map((room, index) => {
-            const banner =
-              room.images?.banner ||
-              'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200&auto=format&fit=crop'
+            const banner = roomBannerSrc(room)
+            const roomLabel = room.name || `Room ${index + 1}`
             return (
               <article key={room.id || room.roomId || index} className="room-card room-card--media">
                 <div className="room-card-media">
-                  <img
-                    src={banner}
-                    alt={`Photograph of the ${room.name || 'guest room'}—bed, windows, and interior`}
-                    className="room-card-banner"
-                    loading="lazy"
-                  />
+                  <button
+                    type="button"
+                    className="room-card-banner-btn"
+                    onClick={() => setGalleryRoom(room)}
+                    aria-label={`View interior photos of ${roomLabel}`}
+                  >
+                    <img
+                      src={banner}
+                      alt={`Photograph of the ${roomLabel}—bed, windows, and interior`}
+                      className="room-card-banner"
+                      loading="lazy"
+                    />
+                    <span className="room-card-banner-hint">View interior</span>
+                  </button>
                 </div>
                 <div className="room-card-body">
                   <h3>{room.name || `Room ${index + 1}`}</h3>
@@ -479,6 +657,7 @@ function Rooms() {
         open={Boolean(bookingRoom)}
         onClose={closeModal}
       />
+      <RoomGalleryModal room={galleryRoom} open={Boolean(galleryRoom)} onClose={closeGallery} />
     </SectionWrapper>
   )
 }
