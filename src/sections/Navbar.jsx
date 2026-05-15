@@ -144,7 +144,11 @@ function Navbar() {
     <header className={`site-nav ${scrolled ? 'scrolled' : ''}`}>
       <Container className="nav-inner">
         <a className="logo" href="#hero">
-          <img src={brandLogo} alt="BB Estate Stay logo" className="brand-logo brand-logo--nav" />
+          <img
+            src={brandLogo}
+            alt="BB Estate Stay illustrated crest logo in the navigation bar"
+            className="brand-logo brand-logo--nav"
+          />
           <span>BB Estate Stay</span>
         </a>
         <nav className="nav-links">

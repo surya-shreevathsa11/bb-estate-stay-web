@@ -115,8 +115,14 @@ function About() {
           </p>
         </article>
         <div className="about-images">
-          <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=1400&auto=format&fit=crop" alt="Estate view" />
-          <img src="https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?q=80&w=1000&auto=format&fit=crop" alt="Verandah" />
+          <img
+            src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=1400&auto=format&fit=crop"
+            alt="Calm lake reflecting pine forest and soft morning mist along the shoreline"
+          />
+          <img
+            src="https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?q=80&w=1000&auto=format&fit=crop"
+            alt="Bright living room with a white sofa, houseplants, and sunlight through large windows"
+          />
         </div>
       </div>
     </SectionWrapper>

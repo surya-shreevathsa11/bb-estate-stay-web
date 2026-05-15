@@ -11,36 +11,42 @@ const experiences = [
     description:
       'Walk through scenic coffee plantations and spice estates in Madikeri. Enjoy peaceful trails, fresh mountain air, and beautiful Coorg hill views.',
     image: '/estate-walk.png',
+    imageAlt: 'Shaded walking path winding through coffee trees and undergrowth on the estate',
   },
   {
     title: 'Verandah Evenings',
     description:
       'Relax in a peaceful verandah surrounded by the misty hills of Madikeri. Enjoy slow living, fresh mountain air, and the calm beauty of Coorg nature.',
     image: '/verandah-eve.png',
+    imageAlt: 'Wide homestay verandah with chairs facing soft evening light and distant hills',
   },
   {
     title: 'Coorg Meals',
     description:
       'Enjoy traditional homemade Coorg food prepared with local flavours and spices. Freshly cooked meals bring the warmth of local hospitality to your stay.',
     image: '/meal.png',
+    imageAlt: 'Table spread with bowls of rice, curries, and vegetable sides served family style',
   },
   {
     title: 'Bonfire Nights',
     description:
       'Enjoy peaceful bonfire evenings under the cool skies of Madikeri, Coorg with mountain air, open spaces, and memorable nights in nature.',
     image: '/bonfire.png',
+    imageAlt: 'Outdoor chairs gathered around a small bonfire after dark under open sky',
   },
   {
     title: 'Bird Watching',
     description:
       'Experience peaceful bird watching in the coffee plantations and hills of Madikeri where morning sounds, fresh air, and the beauty of Coorg nature surround you.',
     image: '/bird-watching.png',
+    imageAlt: 'Early sun over layered treetops and open sky above the plantation canopy',
   },
   {
     title: 'Estate to Cup',
     description:
       'Experience the journey from fresh coffee cherries to authentic Coorg coffee grown in the plantations of Madikeri and crafted with care at every step.',
     image: '/coffee-cup.png',
+    imageAlt: 'Freshly brewed coffee in a cup beside roasted beans on a wooden surface',
   },
 ]
 
@@ -213,7 +219,7 @@ function Experiences() {
               <img
                 className={`${styles.image} ${styles.imagePrimary}`}
                 src={item.image}
-                alt=""
+                alt={item.imageAlt}
                 loading={index === 0 ? 'eager' : 'lazy'}
               />
               <div className={styles.mediaGrain} />

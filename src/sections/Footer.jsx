@@ -17,11 +17,11 @@ function Footer() {
           rel="noopener noreferrer"
           aria-label="VARA on Instagram"
         >
-          <img src={varaLogo} alt="" className="footer-vara-mark" width="44" height="44" />
+          <img src={varaLogo} alt="VARA Labs circular logo mark" className="footer-vara-mark" width="44" height="44" />
         </a>
         <div className="footer-brand-block">
           <h3 className="footer-brand">
-            <img src={brandLogo} alt="" className="brand-logo brand-logo--footer" />
+            <img src={brandLogo} alt="BB Estate Stay illustrated crest logo" className="brand-logo brand-logo--footer" />
             <span>BB Estate Stay</span>
           </h3>
           <p className="footer-tagline">An estate stay. A living home.</p>

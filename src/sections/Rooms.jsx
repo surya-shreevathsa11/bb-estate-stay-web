@@ -452,7 +452,12 @@ function Rooms() {
             return (
               <article key={room.id || room.roomId || index} className="room-card room-card--media">
                 <div className="room-card-media">
-                  <img src={banner} alt="" className="room-card-banner" loading="lazy" />
+                  <img
+                    src={banner}
+                    alt={`Photograph of the ${room.name || 'guest room'}—bed, windows, and interior`}
+                    className="room-card-banner"
+                    loading="lazy"
+                  />
                 </div>
                 <div className="room-card-body">
                   <h3>{room.name || `Room ${index + 1}`}</h3>
