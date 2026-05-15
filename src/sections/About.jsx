@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import SectionWrapper from '../components/SectionWrapper'
+import aboutPrimary from '../assets/bbestatestay(about).jpeg'
+import aboutSecondary from '../assets/bbestatestay(about2).jpeg'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -116,12 +118,16 @@ function About() {
         </article>
         <div className="about-images">
           <img
-            src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=1400&auto=format&fit=crop"
-            alt="Calm lake reflecting pine forest and soft morning mist along the shoreline"
+            src={aboutPrimary}
+            alt="BB Estate ancestral house and grounds in Kadagadalu, Madikeri"
+            decoding="async"
+            fetchPriority="low"
           />
           <img
-            src="https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?q=80&w=1000&auto=format&fit=crop"
-            alt="Bright living room with a white sofa, houseplants, and sunlight through large windows"
+            src={aboutSecondary}
+            alt="BB Estate homestay verandah and heritage architecture"
+            decoding="async"
+            fetchPriority="low"
           />
         </div>
       </div>

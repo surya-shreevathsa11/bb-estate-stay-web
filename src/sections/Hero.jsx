@@ -34,7 +34,7 @@ function Hero() {
     gsap.set(elements, { opacity: 0, y: 40 })
 
     let tl
-    if (lowEndDevice || reducedMotion) {
+    if (lowEndDevice || reducedMotion || mobile) {
       gsap.set(video, { scale: 1 })
       gsap.set(elements, { opacity: 1, y: 0 })
     } else {
@@ -59,7 +59,7 @@ function Hero() {
     }
 
     let trigger
-    if (!lowEndDevice && !reducedMotion) {
+    if (!lowEndDevice && !reducedMotion && !mobile) {
       trigger = ScrollTrigger.create({
         trigger: '.hero-section',
         start: 'top top',
@@ -89,7 +89,7 @@ function Hero() {
       if (tl) tl.kill()
       if (trigger) trigger.kill()
     }
-  }, [lowEndDevice, reducedMotion])
+  }, [lowEndDevice, reducedMotion, mobile])
 
   return (
     <section id="hero" className="hero-section">
@@ -104,7 +104,7 @@ function Hero() {
         defaultMuted
         loop
         playsInline
-        preload="metadata"
+        preload="auto"
         poster={poster || undefined}
         onCanPlay={() => setVideoReady(true)}
       >

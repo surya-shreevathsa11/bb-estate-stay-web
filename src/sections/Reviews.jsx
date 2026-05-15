@@ -2,9 +2,9 @@ import SectionWrapper from '../components/SectionWrapper'
 
 const reviews = [
   {
-    name: 'Sheetal',
+    name: 'Aravind',
     date: null,
-    text: 'It was exactly like photos, very clean and aesthetic with peaceful surroundings. Madan was very responsive, gave clear instructions about everything and made our stay very comfortable.',
+    text: 'I recently stayed at this property and had an excellent experience. The place is private, neat, and very well-maintained. Everything was clean and organized, and the atmosphere truly felt like home. It was comfortable, peaceful, and perfect for a relaxing stay. I would definitely recommend this place to anyone looking for a homely and pleasant accommodation.',
   },
   {
     name: 'Puneet',
@@ -13,7 +13,7 @@ const reviews = [
   },
   {
     name: 'Smita',
-    text: 'The 200 year old place was amazingly beautiful. Superbly maintained and squeaky clean. The hosts were amazing and meeting them were like meeting old friends. The care taker Akka was super sweet. Overall the place is well-maintained and perfect for a peaceful getaway.',
+    text: 'The 200 year old place was amazingly beautiful. Superbly maintained and squeaky clean. The hosts were amazing and meeting them were like meeting old friends. The care taker Akka was super sweet. Overall the place is well-maintained and perfect for a peaceful getaway.  I’d be happy to stay here again!',
   },
 ]
 
