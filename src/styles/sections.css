@@ -1374,14 +1374,21 @@ body:has(main.cart-page) .site-nav:not(.scrolled) .menu-toggle span {
 
 #policies .section-header {
   text-align: center;
+  margin-bottom: clamp(20px, 3vw, 32px);
 }
 
 #policies .policy-list {
-  text-align: center;
+  max-width: min(44rem, 100%);
+  margin-inline: auto;
 }
 
 .policy-item {
-  border-bottom: 1px solid var(--color-gold);
+  border-bottom: 1px solid rgb(232 212 180 / 85%);
+  transition: background-color 0.25s ease;
+}
+
+.policy-item.open {
+  background: rgb(252 248 240 / 55%);
 }
 
 .policy-item-toggle {
@@ -1393,7 +1400,7 @@ body:has(main.cart-page) .site-nav:not(.scrolled) .menu-toggle span {
   gap: 12px;
   background: transparent;
   border: 0;
-  padding: 16px 2.5rem 16px 2.5rem;
+  padding: clamp(16px, 2.5vw, 20px) clamp(2.5rem, 5vw, 3rem);
   font-family: var(--font-heading-family);
   font-size: clamp(1.25rem, 2.2vw, 1.5rem);
   font-weight: 500;
@@ -1401,6 +1408,11 @@ body:has(main.cart-page) .site-nav:not(.scrolled) .menu-toggle span {
   line-height: 1.12;
   cursor: pointer;
   color: inherit;
+  transition: color 0.2s ease;
+}
+
+.policy-item-toggle:hover {
+  color: var(--color-estate);
 }
 
 .policy-item-title {
@@ -1409,7 +1421,7 @@ body:has(main.cart-page) .site-nav:not(.scrolled) .menu-toggle span {
 
 .policy-item-chevron {
   position: absolute;
-  right: 10px;
+  right: clamp(12px, 3vw, 18px);
   top: 50%;
   width: 9px;
   height: 9px;
@@ -1432,10 +1444,6 @@ body:has(main.cart-page) .site-nav:not(.scrolled) .menu-toggle span {
   opacity: 1;
 }
 
-#policies .policy-item-toggle {
-  text-align: center;
-}
-
 .policy-item-panel {
   max-height: 0;
   overflow: hidden;
@@ -1445,52 +1453,61 @@ body:has(main.cart-page) .site-nav:not(.scrolled) .menu-toggle span {
 
 .policy-item.open .policy-item-panel {
   max-height: 1200px;
-  padding-bottom: 20px;
+  padding:
+    0
+    clamp(12px, 2.5vw, 20px)
+    clamp(20px, 2.8vw, 28px);
+}
+
+.policy-item.open .policy-item-panel .policy-body-list {
+  padding-top: 4px;
+  border-top: 1px solid rgb(232 212 180 / 45%);
 }
 
 .policy-body-list {
   list-style: none;
-  margin: 0 auto;
-  padding: 0;
+  width: fit-content;
   max-width: min(40rem, 100%);
+  margin-inline: auto;
+  padding: 0 clamp(4px, 1.5vw, 12px);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 14px;
+  gap: clamp(12px, 1.8vw, 16px);
   font-family: var(--font-body-family);
   font-size: var(--font-size-body);
   line-height: 1.65;
-  color: rgb(28 18 8 / 92%);
-  text-align: center;
+  color: rgb(74 41 32 / 88%);
+  text-align: left;
 }
 
 .policy-body-list li {
   position: relative;
+  display: block;
   margin: 0;
-  padding: 0;
-  max-width: min(36rem, 100%);
-  text-align: center;
+  padding: 0 0 0 1.15rem;
+  max-width: none;
+  text-align: left;
+  white-space: normal;
 }
 
 .policy-body-list li::before {
   content: '';
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  margin-right: 0.55em;
+  position: absolute;
+  left: 0;
+  top: 0.68em;
+  width: 6px;
+  height: 6px;
+  margin: 0;
   border-radius: 50%;
   background: var(--color-copper);
-  opacity: 0.88;
-  vertical-align: 0.2em;
+  box-shadow: 0 0 0 3px rgb(166 89 61 / 14%);
 }
 
-.policy-body-list strong {
+.policy-body-list li strong {
+  display: inline;
   font-weight: 600;
-  color: var(--color-ink);
-}
-
-#policies .policy-body-list {
-  text-align: center;
+  color: var(--color-estate);
+  white-space: nowrap;
 }
 
 .site-footer {
@@ -1834,27 +1851,31 @@ body:has(main.cart-page) .site-nav:not(.scrolled) .menu-toggle span {
   }
 
   .about-images {
-    max-height: none;
-    aspect-ratio: auto;
+    max-height: min(52vh, 440px);
+    aspect-ratio: 2 / 3;
     margin-top: 0;
     order: -1;
     position: relative;
-    min-height: min(52vh, 440px);
+    min-height: 0;
+    width: 100%;
   }
 
   .about-images img:first-child {
-    height: auto;
-    aspect-ratio: 2 / 3;
-    max-height: min(46vh, 400px);
-    object-position: center 30%;
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    aspect-ratio: auto;
+    object-position: center 32%;
   }
 
   .about-images img:last-child {
     display: block;
-    left: 6%;
-    bottom: -5%;
-    width: min(46%, 200px);
-    max-height: 38%;
+    left: 0.5%;
+    bottom: -9%;
+    width: 64%;
+    max-height: 48%;
+    object-position: center;
+    z-index: 1;
   }
 
   .split-fields {
@@ -2140,9 +2161,82 @@ body:has(main.cart-page) .site-nav:not(.scrolled) .menu-toggle span {
 }
 
 @media (max-width: 767px) {
-  .room-gallery-nav {
+  .room-gallery-modal-header {
+    padding:
+      max(12px, env(safe-area-inset-top, 0px))
+      max(14px, env(safe-area-inset-right, 0px))
+      16px
+      max(14px, env(safe-area-inset-left, 0px));
+  }
+
+  .room-gallery-modal-title {
+    font-size: clamp(1.2rem, 5.2vw, 1.45rem);
+  }
+
+  .room-gallery-modal-close {
     width: 48px;
     height: 48px;
+  }
+
+  .room-gallery-stage {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    padding:
+      calc(64px + env(safe-area-inset-top, 0px))
+      0
+      max(18px, env(safe-area-inset-bottom, 0px));
+    touch-action: pan-y;
+  }
+
+  .room-gallery-main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+  }
+
+  .room-gallery-main-img {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: calc(100dvh - 88px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+    max-height: calc(100vh - 88px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+    object-fit: contain;
+    object-position: center;
+  }
+
+  .room-gallery-nav {
+    position: absolute;
+    top: 50%;
+    z-index: 4;
+    width: 48px;
+    height: 48px;
+    margin: 0;
+    transform: translateY(-50%);
+    background: rgb(12 10 8 / 72%);
+    border-color: rgb(247 241 230 / 42%);
+    box-shadow: 0 4px 16px rgb(0 0 0 / 35%);
+  }
+
+  .room-gallery-nav--prev {
+    left: max(10px, env(safe-area-inset-left, 0px));
+  }
+
+  .room-gallery-nav--next {
+    right: max(10px, env(safe-area-inset-right, 0px));
+  }
+
+  .room-gallery-nav:active {
+    transform: translateY(-50%) scale(0.96);
   }
 
   #rooms .room-card-banner-hint {

@@ -17,8 +17,9 @@ const policySections = [
         Booking is confirmed with <strong>50%</strong> advance.
       </>,
       <>
-        <strong>₹1,500</strong> per extra guest beyond your confirmed booking. Only registered guests may stay.
+        <strong>₹1,500</strong> per extra guest beyond your confirmed booking. 
       </>,
+      <>Only registered guests may stay.</>,
     ],
   },
   {
@@ -34,12 +35,16 @@ const policySections = [
     title: 'House rules & guest care',
     bullets: [
       <>
-        {"You're responsible for any damage during your stay. We're not liable for accidents, injury, or lost items."}
+        You're responsible for any damage during your stay. 
       </>,
+      <>We're not liable for accidents, injury, or lost items.</>,
       <>
-        Smoking and alcohol are not permitted in rooms, quiet hours begin at <strong>10 PM</strong>, pets are not
-        allowed on beds or sofas, and only children under <strong>5</strong> are considered as kids.
+        Smoking and alcohol are not permitted in rooms.
       </>,
+      <>Quiet hours begin at <strong>10 PM</strong>.</>,
+      <>Pets are not allowed on beds or sofas.</>,
+      <>Only children under <strong>5</strong> are considered as kids.</>
+
     ],
   },
 ]
