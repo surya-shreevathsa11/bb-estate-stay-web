@@ -77,11 +77,9 @@ function Experiences() {
             const image = panel.querySelector(`.${styles.imagePrimary}`)
             const title = panel.querySelector(`.${styles.title}`)
             const description = panel.querySelector(`.${styles.description}`)
-            const kicker = panel.querySelector(`.${styles.kicker}`)
-            const counter = panel.querySelector(`.${styles.counter}`)
             const divider = panel.querySelector(`.${styles.divider}`)
 
-            if (!image || !title || !description || !kicker || !counter || !divider) return null
+            if (!image || !title || !description || !divider) return null
 
             const words = title.textContent.trim().split(' ')
             title.innerHTML = words
@@ -94,8 +92,6 @@ function Experiences() {
             return {
               panel,
               image,
-              kicker,
-              counter,
               divider,
               wordEls: title.querySelectorAll(`.${styles.word}`),
               lines: description.querySelectorAll(`.${styles.line}`),
@@ -124,11 +120,6 @@ function Experiences() {
             gsap.set(parts.image, { yPercent: 8, scale: 1.12 })
             gsap.set(parts.wordEls, { autoAlpha: index === 0 ? 1 : 0 })
             gsap.set(parts.lines, { autoAlpha: index === 0 ? 1 : 0 })
-            gsap.set(parts.kicker, {
-              autoAlpha: index === 0 ? 1 : 0,
-              letterSpacing: index === 0 ? '0.16em' : '0.06em',
-            })
-            gsap.set(parts.counter, { autoAlpha: index === 0 ? 1 : 0 })
             gsap.set(parts.divider, {
               scaleX: index === 0 ? 1 : 0,
               transformOrigin: 'left center',
@@ -136,8 +127,6 @@ function Experiences() {
           })
 
           const revealPanelContent = (tl, parts, position = 0) => {
-            tl.to(parts.kicker, { autoAlpha: 1, letterSpacing: '0.16em', duration: 0.24, ease: 'power2.out' }, position)
-            tl.to(parts.counter, { autoAlpha: 1, duration: 0.2, ease: 'power2.out' }, position)
             tl.to(parts.divider, { scaleX: 1, duration: 0.24, ease: 'power2.out' }, position + 0.04)
             tl.to(parts.wordEls, { autoAlpha: 1, stagger: 0.03, duration: 0.24, ease: 'power2.out' }, position + 0.04)
             tl.to(parts.lines, { autoAlpha: 1, stagger: 0.04, duration: 0.2, ease: 'power2.out' }, position + 0.08)
@@ -146,8 +135,6 @@ function Experiences() {
           const hidePanelContent = (tl, parts, position = 0) => {
             tl.to(parts.wordEls, { autoAlpha: 0, duration: 0.18, stagger: 0.01, ease: 'power1.in' }, position)
             tl.to(parts.lines, { autoAlpha: 0, duration: 0.14, stagger: 0.02, ease: 'power1.in' }, position)
-            tl.to(parts.kicker, { autoAlpha: 0, duration: 0.14, ease: 'power1.in' }, position)
-            tl.to(parts.counter, { autoAlpha: 0, duration: 0.14, ease: 'power1.in' }, position)
             tl.to(parts.divider, { scaleX: 0, transformOrigin: 'right center', duration: 0.14, ease: 'power1.in' }, position)
           }
 
@@ -200,10 +187,6 @@ function Experiences() {
         <section key={item.title} className={styles.panel}>
           <div className={styles.inner}>
             <article className={styles.copy}>
-              <div className={styles.topMeta}>
-                <p className={styles.kicker}>Experiences</p>
-                <span className={styles.counter}>{String(index + 1).padStart(2, '0')}</span>
-              </div>
               <div className={styles.divider} />
               <h2 className={styles.title}>{item.title}</h2>
               <p className={styles.description}>
