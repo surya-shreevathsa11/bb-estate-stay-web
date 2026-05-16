@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import SectionWrapper from '../components/SectionWrapper'
+import { useAvailability } from '../hooks/useAvailability'
 
+<<<<<<< HEAD
 const galleryItems = [
   {
     src: 'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?q=80&w=1200&auto=format&fit=crop',
@@ -19,9 +21,23 @@ const galleryItems = [
     src: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1200&auto=format&fit=crop',
     alt: 'Sunlight falling through tall trunks onto a quiet forest path',
   },
+=======
+const fallbackGallery = [
+  'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?q=80&w=1200&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=800&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?q=80&w=800&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1200&auto=format&fit=crop',
+>>>>>>> 8e7f90d (site gallery)
 ]
 
 function Gallery() {
+  const { siteGalleryImages } = useAvailability()
+  const gallery = useMemo(
+    () =>
+      siteGalleryImages.length > 0 ? siteGalleryImages : fallbackGallery,
+    [siteGalleryImages],
+  )
+
   const scrollerRef = useRef(null)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(false)
@@ -39,12 +55,15 @@ function Gallery() {
     updateArrows()
     scroller.addEventListener('scroll', updateArrows, { passive: true })
     window.addEventListener('resize', updateArrows)
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(updateArrows) : null
+    if (ro) ro.observe(scroller)
 
     return () => {
       scroller.removeEventListener('scroll', updateArrows)
       window.removeEventListener('resize', updateArrows)
+      ro?.disconnect()
     }
-  }, [])
+  }, [gallery])
 
   const scrollGallery = (direction) => {
     const scroller = scrollerRef.current
@@ -78,13 +97,21 @@ function Gallery() {
         <div className="gallery-grid" ref={scrollerRef}>
           {galleryItems.map((item, idx) => (
             <motion.figure
+<<<<<<< HEAD
               key={item.src}
+=======
+              key={`${idx}-${src}`}
+>>>>>>> 8e7f90d (site gallery)
               initial={{ opacity: 0, scale: 0.97 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true, amount: 0.25 }}
               transition={{ duration: 0.6, delay: idx * 0.1 }}
             >
+<<<<<<< HEAD
               <img src={item.src} alt={item.alt} />
+=======
+              <img src={src} alt={`Estate gallery photo ${idx + 1}`} loading="lazy" />
+>>>>>>> 8e7f90d (site gallery)
             </motion.figure>
           ))}
         </div>

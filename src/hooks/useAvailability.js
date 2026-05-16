@@ -1,8 +1,20 @@
 import { useCallback, useEffect, useState } from 'react'
 import { getRooms } from '../services/api'
 
+let roomsPayloadInflight = null
+
+function fetchRoomsPayload() {
+  if (!roomsPayloadInflight) {
+    roomsPayloadInflight = getRooms().finally(() => {
+      roomsPayloadInflight = null
+    })
+  }
+  return roomsPayloadInflight
+}
+
 export function useAvailability() {
   const [rooms, setRooms] = useState([])
+  const [siteGalleryImages, setSiteGalleryImages] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -11,8 +23,10 @@ export function useAvailability() {
     setError('')
 
     try {
-      const data = await getRooms()
+      const data = await fetchRoomsPayload()
       setRooms(Array.isArray(data) ? data : data?.rooms || [])
+      const gallery = data?.siteGallery?.images
+      setSiteGalleryImages(Array.isArray(gallery) ? gallery : [])
     } catch (err) {
       setError(err.message || 'Could not load rooms.')
     } finally {
@@ -27,5 +41,5 @@ export function useAvailability() {
     return () => window.clearTimeout(t)
   }, [fetchRooms])
 
-  return { rooms, loading, error, refetch: fetchRooms }
+  return { rooms, siteGalleryImages, loading, error, refetch: fetchRooms }
 }
