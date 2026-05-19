@@ -28,6 +28,12 @@ export function getCart(token) {
   })
 }
 
+export function getGuestBookings(token) {
+  return guestAuthorizedFetch('/api/guest/bookings', token, {
+    method: 'GET',
+  })
+}
+
 export function addCartItem(payload, token) {
   return guestAuthorizedFetch('/api/guest/bookings/cart/items', token, {
     method: 'POST',

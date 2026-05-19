@@ -3,6 +3,7 @@ import { gsap } from 'gsap'
 import Button from '../components/Button'
 import Container from '../components/Container'
 import SignInModal from '../components/SignInModal'
+import UserProfileMenu from '../components/UserProfileMenu'
 import { useCart } from '../hooks/useCart'
 import { useDeviceCapabilities } from '../hooks/useDeviceCapabilities'
 import { useGuestAuth } from '../hooks/useGuestAuth'
@@ -177,9 +178,7 @@ function Navbar() {
             ) : null}
           </button>
           {signedIn ? (
-            <Button variant="outline" className="nav-auth-btn" onClick={signOut}>
-              Sign Out
-            </Button>
+            <UserProfileMenu onSignOut={signOut} />
           ) : (
             <Button variant="outline" className="nav-auth-btn" onClick={openModal}>
               Sign In
@@ -223,18 +222,7 @@ function Navbar() {
             {itemCount > 0 ? <span className="mobile-menu-cart-count">({itemCount})</span> : null}
           </span>
         </button>
-        {signedIn ? (
-          <Button
-            variant="primary"
-            className="mobile-book"
-            onClick={() => {
-              signOut()
-              setOpen(false)
-            }}
-          >
-            Sign Out
-          </Button>
-        ) : (
+        {!signedIn ? (
           <Button
             variant="primary"
             className="mobile-book"
@@ -245,7 +233,7 @@ function Navbar() {
           >
             Sign In
           </Button>
-        )}
+        ) : null}
       </div>
 
       <SignInModal
