@@ -121,10 +121,30 @@ const PROPERTY_IMAGE_OBJECT_JSON_LD = {
 }
 
 /**
- * @param {boolean} isCart
+ * @param {{ isCart: boolean, isMyBookings: boolean }} routes
  * @returns {Record<string, unknown>}
  */
-function getBreadcrumbJsonLd(isCart) {
+function getBreadcrumbJsonLd({ isCart, isMyBookings }) {
+  if (isMyBookings) {
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Home',
+          item: `${SITE_ORIGIN}/`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: 'My bookings',
+          item: `${SITE_ORIGIN}/#my-bookings`,
+        },
+      ],
+    }
+  }
   if (isCart) {
     return {
       '@context': 'https://schema.org',
@@ -170,6 +190,19 @@ const HOME = /** @type {SeoPayload} */ ({
   ogDescription:
     'BB Estate Homestay in Madikeri, Coorg—heritage homestay rooms on a Karnataka coffee estate, India. Slow stays, verandahs, and warm family hospitality.',
   ogImageAlt: PRIMARY_IMAGE_CAPTION,
+})
+
+/** My bookings (`/#my-bookings`). */
+const MY_BOOKINGS = /** @type {SeoPayload} */ ({
+  title: 'My bookings | BB Estate Homestay | Madikeri',
+  description:
+    'View your confirmed and pending stays at BB Estate Homestay in Madikeri, Coorg—dates, payment, and booking details.',
+  canonical: `${SITE_ORIGIN}/`,
+  ogUrl: `${SITE_ORIGIN}/`,
+  ogTitle: 'My bookings | BB Estate Homestay | Madikeri',
+  ogDescription:
+    'View your confirmed and pending stays at BB Estate Homestay in Madikeri, Coorg—dates, payment, and booking details.',
+  ogImageAlt: 'BB Estate Homestay—your booking history',
 })
 
 /** Cart / checkout view (`/#cart`). */
@@ -230,11 +263,12 @@ function syncJsonLdInHead(elementId, payload, show) {
 }
 
 /**
- * Updates document-level SEO for the SPA route (home vs cart).
- * @param {{ isCart: boolean }} params
+ * Updates document-level SEO for the SPA route (home vs cart vs my bookings).
+ * @param {{ isCart: boolean, isMyBookings?: boolean }} params
  */
-export function applyRouteSeo({ isCart }) {
-  const p = isCart ? CART : HOME
+export function applyRouteSeo({ isCart, isMyBookings = false }) {
+  const p = isMyBookings ? MY_BOOKINGS : isCart ? CART : HOME
+  const isHome = !isCart && !isMyBookings
 
   document.title = p.title
 
@@ -256,9 +290,9 @@ export function applyRouteSeo({ isCart }) {
   setMetaAttribute('property', 'og:image:type', 'image/jpeg')
   setMetaAttribute('property', 'og:image:alt', p.ogImageAlt)
 
-  syncJsonLdInHead(LODGING_JSON_LD_ID, LODGING_BUSINESS_JSON_LD, !isCart)
-  syncJsonLdInHead(FAQ_JSON_LD_ID, FAQ_PAGE_JSON_LD, !isCart)
-  syncJsonLdInHead(WEBSITE_JSON_LD_ID, WEB_SITE_JSON_LD, !isCart)
-  syncJsonLdInHead(IMAGE_OBJECT_JSON_LD_ID, PROPERTY_IMAGE_OBJECT_JSON_LD, !isCart)
-  syncJsonLdInHead(BREADCRUMB_JSON_LD_ID, getBreadcrumbJsonLd(isCart), true)
+  syncJsonLdInHead(LODGING_JSON_LD_ID, LODGING_BUSINESS_JSON_LD, isHome)
+  syncJsonLdInHead(FAQ_JSON_LD_ID, FAQ_PAGE_JSON_LD, isHome)
+  syncJsonLdInHead(WEBSITE_JSON_LD_ID, WEB_SITE_JSON_LD, isHome)
+  syncJsonLdInHead(IMAGE_OBJECT_JSON_LD_ID, PROPERTY_IMAGE_OBJECT_JSON_LD, isHome)
+  syncJsonLdInHead(BREADCRUMB_JSON_LD_ID, getBreadcrumbJsonLd({ isCart, isMyBookings }), true)
 }
