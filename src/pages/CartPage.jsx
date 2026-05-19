@@ -224,8 +224,16 @@ function CheckoutFlowModal({
         return
       }
 
-      const orderId = data?.orderId ?? data?.order_id ?? data?.razorpay_order_id
-      const key = data?.key ?? data?.razorpayKeyId ?? import.meta.env.VITE_RAZORPAY_KEY_ID
+      const orderId =
+        data?.orderId ??
+        data?.order_id ??
+        data?.razorpayOrderId ??
+        data?.razorpay_order_id
+      const key =
+        data?.key ??
+        data?.razorpayKeyId ??
+        data?.razorpay_key_id ??
+        import.meta.env.VITE_RAZORPAY_KEY_ID
       if (!orderId || !key) {
         throw new Error('Payment session could not be started. Please try again later.')
       }
@@ -235,7 +243,10 @@ function CheckoutFlowModal({
       const amount =
         data?.amount ??
         data?.amountInPaise ??
-        (typeof data?.amountInRupees === 'number' ? Math.round(data.amountInRupees * 100) : undefined)
+        (typeof data?.amountInRupees === 'number' ? Math.round(data.amountInRupees * 100) : undefined) ??
+        (typeof data?.expectedPrepaidAmount === 'number'
+          ? Math.round(data.expectedPrepaidAmount * 100)
+          : undefined)
 
       const options = {
         key: String(key),
