@@ -27,6 +27,13 @@ export function useGuestAuth() {
   const [signedIn, setSignedIn] = useState(Boolean(getGuestToken()))
   const googleButtonRef = useRef(null)
 
+  // Each caller gets its own hook state; sync from storage when auth changes elsewhere (e.g. Navbar sign-in).
+  useEffect(() => {
+    const syncSignedIn = () => setSignedIn(Boolean(getGuestToken()))
+    window.addEventListener('guest-auth-changed', syncSignedIn)
+    return () => window.removeEventListener('guest-auth-changed', syncSignedIn)
+  }, [])
+
   const googleClientConfigured = Boolean(getGoogleClientId())
 
   const canSubmit = useMemo(
