@@ -6,7 +6,7 @@ const policySections = [
     title: 'Check-in & Check-out',
     bullets: [
       <>
-        Check-in from <strong>2:00 PM</strong>. Check-out by <strong>11:00 AM</strong>.
+        Check-in from <strong>2:00 PM</strong>. Check-out by <strong>10:00 AM</strong>.
       </>,
     ],
   },
@@ -38,11 +38,10 @@ const policySections = [
         You're responsible for any damage during your stay. 
       </>,
       <>We're not liable for accidents, injury, or lost items.</>,
-      <>
-        Smoking and alcohol are not permitted in rooms.
-      </>,
+      <>Smoking is not permitted inside rooms or indoor areas.</>,
+      <>Alcohol is permitted during your stay.</>,
       <>Quiet hours begin at <strong>10 PM</strong>.</>,
-      <>Pets are not allowed on beds or sofas.</>,
+      <>Pets are not permitted on the estate.</>,
       <>Only children under <strong>5</strong> are considered as kids.</>
 
     ],

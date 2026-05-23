@@ -21,9 +21,11 @@ const TERMS_BULLETS = [
   'Only registered guests are allowed on the property.',
   'Guests are responsible for any damages caused during their stay.',
   'Management is not liable for accidents, injuries, or loss of belongings.',
-  'Smoking and alcohol are not allowed inside rooms.',
+  'Check-in from 2:00 PM. Check-out by 10:00 AM.',
+  'Smoking is not permitted inside rooms or indoor areas.',
+  'Alcohol is permitted during your stay.',
   'No loud music or parties after 10 PM.',
-  'Pets are not allowed.',
+  'Pets are not permitted on the estate.',
   'Children aged 5 and below are considered kids.',
 ]
 
