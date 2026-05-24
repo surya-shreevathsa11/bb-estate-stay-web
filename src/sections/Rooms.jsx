@@ -15,11 +15,11 @@ import {
 /** Estate copy for known room names (API may omit or shorten descriptions). */
 const ESTATE_ROOM_DESCRIPTIONS = {
   bungalow:
-    'A cozy heritage room for 2 adults and 1 child, filled with old world charm, peaceful surroundings, and the comfort of a quiet plantation stay.',
+    'A cozy heritage room for 2 adults and 1 child, filled with old world charm, peaceful surroundings, and the comfort of a quiet plantation stay with complimentary breakfast.',
   annexe:
-    'A warm and private space for 2 adults and 1 child, designed for slow mornings, quiet evenings, and a peaceful stay surrounded by the beauty of the estate.',
+    'A warm and private space for 2 adults and 1 child, designed for slow mornings, quiet evenings, and a peaceful stay surrounded by the beauty of the estate with complimentary breakfast.',
   'ancestral home':
-    'A 200 year old heritage home for up to 10 guests, where aged timber, wide verandahs, and the raw charm of old Coorg come alive amidst the plantation.',
+    'A 200 year old heritage home for up to 10 guests, where aged timber, wide verandahs, and the raw charm of old Coorg come alive amidst the plantation with complimentary breakfast.',
 }
 
 function estateDescriptionForRoom(room) {

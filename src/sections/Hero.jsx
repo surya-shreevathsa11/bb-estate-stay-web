@@ -105,8 +105,9 @@ function Hero() {
         loop
         playsInline
         preload="auto"
+        fetchPriority="high"
         poster={poster || undefined}
-        onCanPlay={() => setVideoReady(true)}
+        onLoadedData={() => setVideoReady(true)}
       >
         <source src={src} type="video/mp4" />
       </video>

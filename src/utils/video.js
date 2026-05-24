@@ -1,9 +1,7 @@
-import droneSampleVideo from '../assets/Drone(sample).mp4'
-
 const HERO_VIDEO_ASSETS = {
-  desktop: droneSampleVideo,
-  mobile: droneSampleVideo,
-  poster: '',
+  desktop: '/drone-hero.mp4',
+  mobile: '/drone-hero.mp4',
+  poster: '/og-bbestatestay.jpeg',
 }
 
 export function getHeroVideoSources(isMobile) {
