@@ -289,28 +289,20 @@ function RoomBookingModal({ room, open, onClose }) {
   const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
   const [checkIn, setCheckIn] = useState('')
   const [checkOut, setCheckOut] = useState('')
-  const [adults, setAdults] = useState(String(Math.min(2, maxAdults)))
-  const [children, setChildren] = useState('0')
+  const [guests, setGuests] = useState(String(Math.min(Math.max(minAdults, 2), maxTotal)))
   const [status, setStatus] = useState('idle')
   const [message, setMessage] = useState('')
   const [dateQuote, setDateQuote] = useState(null)
   const [dateQuoteLoading, setDateQuoteLoading] = useState(false)
   const [dateQuoteError, setDateQuoteError] = useState('')
 
-  const adultsNum = Number(adults) || minAdults
-  const childrenNum = Number(children) || 0
+  const guestsNum = Number(guests) || minAdults
 
-  const adultOptions = useMemo(() => {
+  const guestOptions = useMemo(() => {
     const opts = []
-    for (let a = minAdults; a <= maxAdults; a += 1) opts.push(a)
+    for (let g = minAdults; g <= maxTotal; g += 1) opts.push(g)
     return opts
-  }, [minAdults, maxAdults])
-
-  const childOptions = useMemo(() => {
-    const opts = []
-    for (let c = 0; c <= maxChildren; c += 1) opts.push(c)
-    return opts
-  }, [maxChildren])
+  }, [minAdults, maxTotal])
 
   const availabilityBannerText = useMemo(() => {
     if (dateQuoteLoading || dateQuoteError) return ''
@@ -422,9 +414,9 @@ function RoomBookingModal({ room, open, onClose }) {
       setMessage('Check-out must be after check-in.')
       return
     }
-    if (adultsNum + childrenNum > maxTotal) {
+    if (guestsNum > maxTotal || guestsNum < minAdults) {
       setStatus('error')
-      setMessage(`This room allows at most ${maxTotal} guests total.`)
+      setMessage(`This room allows ${minAdults === maxTotal ? maxTotal : `${minAdults}–${maxTotal}`} guests.`)
       return
     }
 
@@ -439,8 +431,8 @@ function RoomBookingModal({ room, open, onClose }) {
       roomId,
       checkIn,
       checkOut,
-      adults: adultsNum,
-      children: childrenNum,
+      adults: guestsNum,
+      children: 0,
     }
 
     setStatus('loading')
@@ -504,21 +496,11 @@ function RoomBookingModal({ room, open, onClose }) {
             />
           </label>
         </div>
-        <div className="room-guest-row">
+        <div className="room-guest-row room-guest-row--single">
           <label className="room-field">
-            <span>Adults</span>
-            <select value={adults} onChange={(e) => setAdults(e.target.value)}>
-              {adultOptions.map((n) => (
-                <option key={n} value={String(n)}>
-                  {n}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="room-field">
-            <span>Children</span>
-            <select value={children} onChange={(e) => setChildren(e.target.value)}>
-              {childOptions.map((n) => (
+            <span>Guests</span>
+            <select value={guests} onChange={(e) => setGuests(e.target.value)}>
+              {guestOptions.map((n) => (
                 <option key={n} value={String(n)}>
                   {n}
                 </option>

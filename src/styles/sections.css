@@ -1249,6 +1249,11 @@ body:has(main.my-bookings-page) .site-nav:not(.scrolled) .menu-toggle span {
   gap: 10px;
 }
 
+.room-guest-row--single {
+  grid-template-columns: 1fr;
+  max-width: 11.5rem;
+}
+
 .room-field {
   display: flex;
   flex-direction: column;
@@ -2660,6 +2665,17 @@ body:has(main.my-bookings-page) .site-nav:not(.scrolled) .menu-toggle span {
   border: 1px solid rgb(28 18 8 / 22%);
   font-weight: 500;
   color: rgb(28 18 8 / 96%);
+  transition:
+    border-color 0.22s ease,
+    box-shadow 0.22s ease,
+    background-color 0.22s ease;
+}
+
+.room-booking-modal .room-field input:focus,
+.room-booking-modal .room-field select:focus {
+  outline: none;
+  border-color: var(--color-copper);
+  box-shadow: 0 0 0 3px rgb(166 89 61 / 14%);
 }
 
 .room-booking-availability-banner {
