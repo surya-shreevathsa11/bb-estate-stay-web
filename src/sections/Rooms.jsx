@@ -120,12 +120,20 @@ function summarizeQuoteForAvailabilityBanner(quote) {
         ? quote.prepaidAmount
         : null
   const total = quote.price
+  const guestDetail =
+    quote.guestPricingSummary &&
+    typeof quote.guestPricingSummary === 'object' &&
+    typeof quote.guestPricingSummary.description === 'string' &&
+    quote.guestPricingSummary.description.trim()
+      ? quote.guestPricingSummary.description.trim()
+      : ''
+  const guestPrefix = guestDetail ? `${guestDetail} — ` : ''
 
   if (total != null && payNow != null) {
-    return `Available — total stay ${formatInr(total)}, payable now (primary) ${formatInr(payNow)}. Find the full breakdown in your cart.`
+    return `Available — ${guestPrefix}total stay ${formatInr(total)}, payable now (primary) ${formatInr(payNow)}. Find the full breakdown in your cart.`
   }
   if (total != null) {
-    return `Available — total stay ${formatInr(total)}. Find the full breakdown in your cart.`
+    return `Available — ${guestPrefix}total stay ${formatInr(total)}. Find the full breakdown in your cart.`
   }
   return 'These dates look available. Add this room to your cart — find the full breakdown there.'
 }
@@ -370,7 +378,13 @@ function RoomBookingModal({ room, open, onClose }) {
         setDateQuote(null)
         try {
           const raw = await requestGuestQuote(
-            { roomId: String(roomId), checkIn, checkOut },
+            {
+              roomId: String(roomId),
+              checkIn,
+              checkOut,
+              adults: guestsNum,
+              children: 0,
+            },
             token,
           )
           if (cancelled) return
@@ -390,7 +404,7 @@ function RoomBookingModal({ room, open, onClose }) {
       window.clearTimeout(t)
       if (clearTimerId != null) window.clearTimeout(clearTimerId)
     }
-  }, [open, signedIn, roomId, checkIn, checkOut])
+  }, [open, signedIn, roomId, checkIn, checkOut, guestsNum])
 
   const onBackdropMouseDown = (e) => {
     if (e.target === e.currentTarget) onClose()
