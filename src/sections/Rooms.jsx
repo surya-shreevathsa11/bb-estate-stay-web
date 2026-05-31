@@ -22,6 +22,28 @@ const ESTATE_ROOM_DESCRIPTIONS = {
     'A 200 year old heritage home for up to 10 guests, where aged timber, wide verandahs, and the raw charm of old Coorg come alive amidst the plantation with complimentary breakfast.',
 }
 
+function isAncestralHomeRoom(room) {
+  const raw = String(room?.name ?? room?.slug ?? room?.roomName ?? '').trim().toLowerCase()
+  return raw.includes('ancestral')
+}
+
+function isBungalowRoom(room) {
+  const raw = String(room?.name ?? room?.slug ?? room?.roomName ?? '').trim().toLowerCase()
+  return raw.includes('bungalow')
+}
+
+function isAnnexeRoom(room) {
+  const raw = String(room?.name ?? room?.slug ?? room?.roomName ?? '').trim().toLowerCase()
+  return raw.includes('annexe') || raw.includes('annex')
+}
+
+function getRoomInfoVariant(room) {
+  if (isAncestralHomeRoom(room)) return 'ancestral'
+  if (isBungalowRoom(room)) return 'bungalow'
+  if (isAnnexeRoom(room)) return 'annexe'
+  return null
+}
+
 function estateDescriptionForRoom(room) {
   const raw = String(room?.name ?? room?.slug ?? room?.roomName ?? '').trim().toLowerCase()
   if (!raw) return null
@@ -270,16 +292,280 @@ function RoomGalleryModal({ room, open, onClose }) {
   return createPortal(modal, document.body)
 }
 
+function RoomInfoModal({ variant, open, onClose }) {
+  useEffect(() => {
+    if (!open) return undefined
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = prev
+    }
+  }, [open])
+
+  useEffect(() => {
+    if (!open) return undefined
+    const onKey = (e) => {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open, onClose])
+
+  const onBackdropMouseDown = (e) => {
+    if (e.target === e.currentTarget) onClose()
+  }
+
+  if (!open) return null
+
+  const modal = (
+    <div
+      className="room-booking-modal-root"
+      role="presentation"
+      onMouseDown={onBackdropMouseDown}
+    >
+      <div
+        className="room-booking-modal room-info-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="room-info-modal-title"
+        onMouseDown={(e) => e.stopPropagation()}
+      >
+        <div className="room-booking-modal-header">
+          <h2 id="room-info-modal-title" className="room-booking-modal-title">
+            About this space
+          </h2>
+          <button type="button" className="room-booking-modal-close" onClick={onClose} aria-label="Close">
+            ×
+          </button>
+        </div>
+        <div className="room-info-modal-body">
+          {variant === 'annexe' ? (
+            <>
+              <ol className="room-info-modal-list">
+                <li>THE RATE IS FOR 2 GUESTS WITH COMPLIMENTARY BREAKFAST.</li>
+                <li>FREE WIFI.</li>
+                <li>SELF CHECK IN</li>
+                <li>SPACIOUS SUITE AND GARDEN AREA.</li>
+                <li>INTERACTIVE AND HELPFUL HOSTS.</li>
+                <li>EXCELLENT CLEANLINESS AND HYGIENE,</li>
+                <li>CAMP FIRE FACILITY.</li>
+              </ol>
+              <p>
+                Nestled amidst a lush coffee plantation and 6 km from Madikeri (the district HQ), this bungalow, while
+                part of our home, has a separate entrance to ensure your privacy.
+              </p>
+              <p>
+                The suite is about 48 sq mt and has a bedroom, an attached bathroom, a dining area and a sit out.
+              </p>
+            </>
+          ) : variant === 'bungalow' ? (
+            <>
+              <ol className="room-info-modal-list">
+                <li>THE RATE IS FOR 2 GUESTS WITH COMPLIMENTARY BREAKFAST.</li>
+                <li>FREE WIFI.</li>
+                <li>SELF CHECK IN</li>
+                <li>SPACIOUS SUITE AND GARDEN AREA.</li>
+                <li>INTERACTIVE AND HELPFUL HOSTS.</li>
+                <li>EXCELLENT CLEANLINESS AND HYGIENE,</li>
+                <li>CAMP FIRE FACILITY.</li>
+              </ol>
+              <p>
+                Nestled amidst a lush coffee plantation and 6 km from Madikeri (the district HQ), this bungalow, while
+                part of our home, has a separate entrance to ensure your privacy. The suite is about 48 sq mt and has a
+                bedroom, an attached bathroom, a dining area and a sit out.
+              </p>
+              <h3>The space</h3>
+              <p>
+                Surrounded by a colourful garden and the plantation, you are bound to see colours you have probably only
+                imagined before. Moreover, the crisp, quiet air will give you a sense of serenity and happiness.
+              </p>
+              <p>
+                If you visit us during the picking season (Jan-Mar) you can experience the process that goes into the
+                making of your favourite brew. Depending on when you are here, you can witness coffee picking, pulping,
+                or sprinkling in the plantation.
+              </p>
+              <h3>Space</h3>
+              <p>
+                <strong>Bedroom A:</strong>
+              </p>
+              <ul>
+                <li>The bedroom has a double bed. Extra mattresses can be provided on request.</li>
+                <li>Fresh linen and pillows are provided.</li>
+                <li>The bedroom has a flat screen TV.</li>
+                <li>
+                  The dining area is separate from the bedroom and is provided with an electric kettle and complimentary
+                  coffee/tea/sugar/milk sachets.
+                </li>
+              </ul>
+              <p>
+                <strong>Bathroom:</strong>
+              </p>
+              <ul>
+                <li>The bathroom is modern and has a geyser for hot water supply.</li>
+                <li>Essentials such as towels and basic toiletries are provided.</li>
+              </ul>
+              <p>
+                <strong>Additional Amenities:</strong>
+              </p>
+              <ul>
+                <li>An iron is available.</li>
+                <li>Guests may use the wardrobe provided.</li>
+                <li>A medical kit is available at the house.</li>
+                <li>Mosquito repellent is provided.</li>
+                <li>A power backup for 10 hrs is available at the house.</li>
+                <li>A secured parking space is available.</li>
+                <li>A campfire may be given at a nominal cost.</li>
+                <li>The suite will be cleaned on a daily basis during your stay at our specified timing.</li>
+                <li>Plantation tour can be conducted at a cost.</li>
+                <li>There are CCTV cameras in the outdoor area.</li>
+                <li>What you see is what you get.</li>
+              </ul>
+              <h3>Guest access</h3>
+              <p>
+                Coorg is striving to be a plastic free zone and we&apos;d like to support it. Please try to avoid
+                bringing plastics, and if you do, make sure you take it back with you.
+              </p>
+              <h3>During your stay</h3>
+              <p>
+                We know that your holiday is personal to you, so you will be provided with ample space. However, if you
+                do require any information or help at any time, do feel free to contact us.
+              </p>
+              <h3>Other things to note</h3>
+              <p>
+                The closest town, Madikeri, is around 6 km away (which is around a 12 minute drive). If you wish to
+                have dinner, you can let us know a day in advance and we will have a hot meal ready for you.
+                Alternatively, you can also have your meal in any restaurant in town or pack your meal and bring it
+                here if you would rather enjoy your meal with a view.
+              </p>
+            </>
+          ) : (
+            <>
+              <ol className="room-info-modal-list">
+                <li>PRICE QUOTED IS FOR 4 PERSONS WITH COMPLIMENTARY BREAKFAST.</li>
+                <li>FREE WIFI.</li>
+                <li>SELF CHECK IN</li>
+                <li>FREE USE OF KITCHEN.</li>
+                <li>INTERACTIVE HELPFUL HOSTS.</li>
+                <li>CAMP FIRE AND BBQ FACILITY AVAILABLE.(CHARGEABLE)</li>
+                <li>EXCELLENT CLEANLINESS AND HYGIENE.</li>
+                <li>GREAT EXPERIENCE OF STAYING IN A HERITAGE PROPERTY.</li>
+              </ol>
+              <p>
+                At our 175 year old cottage, you will wake up to a panoramic view of mist rolling down the coffee
+                plantation. With 3 bedrooms and modern attached bathrooms, you can embrace the traditional with the
+                modern.
+              </p>
+              <h3>The space</h3>
+              <p>
+                Our ancestral home, measures 1600 sq ft, has 3 bedrooms with attached bathrooms, a hall, a sitout, and a
+                kitchenette. If you are looking for hospitality, fun, and cleanliness, you have come to the right place.
+              </p>
+              <p>A few things to note are:</p>
+              <ul>
+                <li>We can take from 4-10 guests.</li>
+              </ul>
+              <p>
+                The house is surrounded by a small colourful garden and this is nestled away in the midst of the coffee
+                plantation. In fact, if you visit us during the picking season (Jan-Mar) you can enjoy a unique experience
+                by witnessing what goes in to the making of your favourite brew. Depending on when you visit us, you can
+                witness coffee picking, pulping, or sprinkling in the plantation.
+              </p>
+              <h3>Space</h3>
+              <p>
+                <strong>Bedrooms:</strong>
+              </p>
+              <ul>
+                <li>3 bedrooms of different sizes with attached bathrooms.</li>
+                <li>All bedrooms have a double bed. Extra mattresses can be provided on request.</li>
+                <li>Fresh linen and pillows are provided in the room.</li>
+                <li>Pedestal fans are provided in all the bedrooms.</li>
+              </ul>
+              <p>
+                <strong>Bathrooms:</strong>
+              </p>
+              <ul>
+                <li>The bathrooms are modern and have a gas geyser for hot water supply.</li>
+                <li>Essentials such as towels and basic toiletries are provided.</li>
+              </ul>
+              <p>
+                <strong>Sitting Room &amp; Open sitout:</strong>
+              </p>
+              <ul>
+                <li>Seating is provided in both areas.</li>
+                <li>A flat screen TV is available.</li>
+                <li>The sitout provides a panoramic view of hills.</li>
+              </ul>
+              <p>
+                <strong>Kitchen and Dining Area:</strong>
+              </p>
+              <ul>
+                <li>A fridge, microwave, electric kettle, and gas stove with basic cooking utensils are provided.</li>
+                <li>Cutlery &amp; crockery are also available.</li>
+                <li>Spring water connected to an Aquaguard system gives safe drinking water.</li>
+              </ul>
+              <p>
+                <strong>Additional Amenities:</strong>
+              </p>
+              <ul>
+                <li>Mosquito repellent is provided.</li>
+                <li>A campfire &amp; BBQ grill ( only the equipment) is available at a nominal cost.</li>
+                <li>Power backup for 6 hrs is available at the cottage.</li>
+                <li>Secured parking space is available</li>
+                <li>The cottage will be cleaned on a daily basis during your stay at our specified timing.</li>
+                <li>A plantation tour can be conducted at a cost.</li>
+                <li>There are CCTV cameras in the outdoor area.</li>
+              </ul>
+              <h3>Guest access</h3>
+              <p>
+                Guests can access the 50 acre plantations and the spaces in and around the home stay. Coorg is striving to
+                be a plastic free zone and we&apos;d like to support it. Please try to avoid bringing plastics, and if you
+                do, make sure you take it back with you.
+              </p>
+              <h3>Other things to note</h3>
+              <p>
+                The closest town, Madikeri, is around 6 km away (which is around a 12 minute drive). While there is a
+                kitchen for you to use, you can request for dinner a day in advance. Alternatively, you can also buy food
+                from any restaurant in Madikeri, have it at the homestay, or if you prefer you can enjoy your meal at the
+                restaurant and then come to the homestay.
+              </p>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+
+  return createPortal(modal, document.body)
+}
+
 function RoomCardCta({ room, onAddClick }) {
+  const [infoOpen, setInfoOpen] = useState(false)
+  const infoVariant = getRoomInfoVariant(room)
+  const showRoomInfo = Boolean(infoVariant)
+
   return (
     <div className="room-booking-block">
-      <p className="room-price-line">
-        <span className="room-price">{formatInr(room.price)}</span>
-        <span className="room-price-unit"> / night</span>
+      <p className={`room-price-line${showRoomInfo ? ' room-price-line--with-info' : ''}`}>
+        <span className="room-price-line-start">
+          <span className="room-price">{formatInr(room.price)}</span>
+          <span className="room-price-unit"> / night</span>
+        </span>
+        {showRoomInfo ? (
+          <button
+            type="button"
+            className="room-info-link"
+            onClick={() => setInfoOpen(true)}
+          >
+            ROOM INFO
+          </button>
+        ) : null}
       </p>
       <Button type="button" variant="primary" className="room-add-cart" onClick={() => onAddClick(room)}>
         Add to cart
       </Button>
+      {showRoomInfo ? (
+        <RoomInfoModal variant={infoVariant} open={infoOpen} onClose={() => setInfoOpen(false)} />
+      ) : null}
     </div>
   )
 }

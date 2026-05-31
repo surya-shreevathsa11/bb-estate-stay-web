@@ -114,7 +114,7 @@ function Hero() {
       <div ref={overlayRef} className="hero-overlay" />
       <div className="hero-content" ref={contentRef}>
         <p className="hero-label hero-animate hero-subtext"></p>
-        <h1 className="hero-animate hero-heading">BB Estate Stay</h1>
+        <h1 className="hero-animate hero-heading">BB Estate Homestay</h1>
         <p className="hero-subheading hero-animate hero-subtext">
           Heritage Homestay in Madikeri
         </p>

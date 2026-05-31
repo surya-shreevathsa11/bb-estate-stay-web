@@ -106,7 +106,7 @@ function About() {
   }, [])
 
   return (
-    <SectionWrapper id="about" title="The Story of BB Estate" tone="parchment" grain>
+    <SectionWrapper id="about" title="The Story of BB Estate Homestay" tone="parchment" grain>
       <div className="about-grid" ref={aboutRef}>
         <article>
           <p>

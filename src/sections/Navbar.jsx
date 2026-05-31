@@ -150,7 +150,7 @@ function Navbar() {
             alt="BB Estate Stay illustrated crest logo in the navigation bar"
             className="brand-logo brand-logo--nav"
           />
-          <span>BB Estate Stay</span>
+          <span>BB Estate Homestay</span>
         </a>
         <nav className="nav-links">
           {links.map((link) => (

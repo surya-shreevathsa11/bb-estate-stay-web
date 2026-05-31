@@ -1,5 +1,8 @@
 import SectionWrapper from '../components/SectionWrapper'
 
+const GOOGLE_REVIEWS_URL =
+  'https://www.google.com/maps/place/BB+Estate+Homestay/@12.4119388,75.7702795,17z/data=!4m11!3m10!1s0x3ba5aa9e89b794ad:0xa746c0e0d81976e6!5m2!4m1!1i2!8m2!3d12.4119388!4d75.7728598!9m1!1b1!16s%2Fg%2F1wrtb90b?entry=ttu&g_ep=EgoyMDI2MDUyNy4wIKXMDSoASAFQAw%3D%3D'
+
 const reviews = [
   {
     name: 'Aravind',
@@ -36,6 +39,17 @@ function Reviews() {
             </footer>
           </article>
         ))}
+      </div>
+      <div className="reviews-view-all-wrap">
+        <a
+          className="btn btn-primary review-view-all-btn"
+          href={GOOGLE_REVIEWS_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="View all reviews on Google Maps"
+        >
+          View all reviews
+        </a>
       </div>
     </SectionWrapper>
   )
