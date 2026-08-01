@@ -1,20 +1,35 @@
 import { useCallback, useEffect, useState } from 'react'
+import Button from '../components/Button'
 import Container from '../components/Container'
 import Footer from '../sections/Footer'
 import Navbar from '../sections/Navbar'
 import { useGuestAuth } from '../hooks/useGuestAuth'
-import { getGuestBookings, getGuestToken } from '../services/api'
+import { usePageVisibility } from '../hooks/usePageVisibility'
+import {
+  ApiError,
+  createGuestPaymentOrder,
+  getGuestBookings,
+  getGuestToken,
+  verifyGuestPayment,
+} from '../services/api'
 import {
   formatBookingDate,
   formatBookingDateTime,
   formatInr,
   formatStatusLabel,
+  getBookingExpiresAt,
   getBookingId,
+  getBookingStatusMessage,
+  getPaymentOrderPayload,
+  isBookingPayable,
+  isPaymentWindowExpired,
+  normalizeBookingStatus,
   unwrapBookingsList,
 } from '../utils/bookings'
+import { openRazorpayCheckout } from '../utils/razorpay'
 
 function StatusBadge({ status, className = '' }) {
-  const slug = String(status || 'unknown').toLowerCase().replace(/\s+/g, '-')
+  const slug = normalizeBookingStatus(status) || 'unknown'
   return (
     <span className={`booking-status-badge booking-status-badge--${slug} ${className}`.trim()}>
       {formatStatusLabel(status)}
@@ -82,34 +97,145 @@ function RoomBlock({ room, index }) {
   )
 }
 
-function BookingCard({ booking }) {
+function paymentErrorMessage(err) {
+  const status = err instanceof ApiError ? err.status : err?.status
+  const msg = err?.message || ''
+  if (status === 410) {
+    return (
+      msg ||
+      'Your payment window has expired. Please add the stay to your cart again and submit a new booking request.'
+    )
+  }
+  if (status === 400) {
+    return (
+      msg ||
+      'This booking is not ready for payment yet. Wait for property approval, or check whether it was declined.'
+    )
+  }
+  return msg || 'Payment could not be started.'
+}
+
+function BookingCard({ booking, onPaid }) {
   const bookingId = getBookingId(booking)
   const guest = booking?.guest || {}
   const rooms = Array.isArray(booking?.rooms) ? booking.rooms : []
   const refundStatus = booking?.refundStatus
-  const showRefundDetails =
-    refundStatus && refundStatus !== 'none' && refundStatus !== ''
+  const showRefundDetails = refundStatus && refundStatus !== 'none' && refundStatus !== ''
+  const status = normalizeBookingStatus(booking?.status)
+  const statusMessage = getBookingStatusMessage(booking)
+  const expiresAt = getBookingExpiresAt(booking)
+  const payable = isBookingPayable(booking)
+  const expiredApproved = status === 'approved' && isPaymentWindowExpired(booking)
+  const [payBusy, setPayBusy] = useState(false)
+  const [payError, setPayError] = useState('')
+  const [paySuccess, setPaySuccess] = useState('')
+
+  const startPayment = useCallback(async () => {
+    const token = getGuestToken()
+    if (!token) {
+      setPayError('Please sign in again to continue.')
+      return
+    }
+    const orderPayload = getPaymentOrderPayload(booking)
+    if (!orderPayload) {
+      setPayError('Booking reference missing. Please refresh and try again.')
+      return
+    }
+
+    setPayBusy(true)
+    setPayError('')
+    setPaySuccess('')
+    try {
+      const orderRaw = await createGuestPaymentOrder(orderPayload, token)
+      const payment = await openRazorpayCheckout(orderRaw, {
+        name: guest.name,
+        email: guest.email,
+        phone: guest.phone,
+      })
+      await verifyGuestPayment(
+        {
+          razorpay_order_id: payment.razorpay_order_id,
+          razorpay_payment_id: payment.razorpay_payment_id,
+          razorpay_signature: payment.razorpay_signature,
+        },
+        token,
+      )
+      setPaySuccess('Payment received. Your booking is confirmed.')
+      onPaid?.()
+    } catch (err) {
+      if (err?.message === 'Payment cancelled.') {
+        setPayError('Payment was cancelled. You can try again before the deadline.')
+      } else {
+        setPayError(paymentErrorMessage(err))
+      }
+    } finally {
+      setPayBusy(false)
+    }
+  }, [booking, guest.email, guest.name, guest.phone, onPaid])
 
   return (
     <li className="booking-card">
       <header className="booking-card-header">
         <div>
           <StatusBadge status={booking?.status} />
-          {booking?.confirmationEmailSent ? (
-            <span className="booking-confirmation-flag">Confirmation email sent</span>
-          ) : (
-            <span className="booking-confirmation-flag booking-confirmation-flag--muted">
-              Confirmation email pending
-            </span>
-          )}
+          {status === 'confirmed' ? (
+            booking?.confirmationEmailSent ? (
+              <span className="booking-confirmation-flag">Confirmation email sent</span>
+            ) : (
+              <span className="booking-confirmation-flag booking-confirmation-flag--muted">
+                Confirmation email pending
+              </span>
+            )
+          ) : null}
         </div>
         <p className="booking-card-meta">
           {bookingId ? <span>Ref. {String(bookingId).slice(-8)}</span> : null}
           {booking?.createdAt ? (
-            <span>Booked {formatBookingDateTime(booking.createdAt)}</span>
+            <span>Requested {formatBookingDateTime(booking.createdAt)}</span>
           ) : null}
         </p>
       </header>
+
+      {statusMessage ? (
+        <p
+          className={`booking-status-message booking-status-message--${status}${
+            expiredApproved ? ' booking-status-message--expired' : ''
+          }`}
+          role="status"
+        >
+          {statusMessage}
+        </p>
+      ) : null}
+
+      {status === 'approved' && expiresAt && !expiredApproved ? (
+        <p className="booking-deadline">
+          Pay by <strong>{formatBookingDateTime(expiresAt)}</strong>
+        </p>
+      ) : null}
+
+      {(payable || expiredApproved || status === 'requested' || status === 'rejected') && (
+        <div className="booking-pay-actions">
+          {payable ? (
+            <Button type="button" variant="primary" disabled={payBusy} onClick={() => void startPayment()}>
+              {payBusy ? 'Opening payment…' : 'Complete payment'}
+            </Button>
+          ) : null}
+          {status === 'requested' ? (
+            <p className="booking-pay-hint">Payment unlocks after the estate approves this request.</p>
+          ) : null}
+          {status === 'rejected' ? (
+            <p className="booking-pay-hint">This request was declined and cannot be paid.</p>
+          ) : null}
+          {expiredApproved ? (
+            <p className="booking-pay-hint">
+              Payment window closed.{' '}
+              <a href="#cart">Return to cart</a> to submit a new request.
+            </p>
+          ) : null}
+          {payError ? <p className="form-message error">{payError}</p> : null}
+          {paySuccess ? <p className="form-message ok">{paySuccess}</p> : null}
+        </div>
+      )}
 
       <section className="booking-card-section" aria-labelledby={`guest-${bookingId}`}>
         <h2 id={`guest-${bookingId}`} className="booking-section-title">
@@ -159,10 +285,24 @@ function BookingCard({ booking }) {
                   : null
             }
           />
+          {status === 'approved' || status === 'confirmed' ? (
+            <DetailRow label="Payment deadline" value={formatBookingDateTime(expiresAt)} />
+          ) : null}
           <DetailRow label="Razorpay order" value={booking?.razorpayOrderId} />
           <DetailRow label="Razorpay payment" value={booking?.razorpayPaymentId} />
         </dl>
       </section>
+
+      {status === 'rejected' && booking?.rejectionReason ? (
+        <section className="booking-card-section" aria-labelledby={`decision-${bookingId}`}>
+          <h2 id={`decision-${bookingId}`} className="booking-section-title">
+            Decision
+          </h2>
+          <dl className="booking-detail-grid">
+            <DetailRow label="Reason" value={booking.rejectionReason} />
+          </dl>
+        </section>
+      ) : null}
 
       <section className="booking-card-section" aria-labelledby={`refund-${bookingId}`}>
         <h2 id={`refund-${bookingId}`} className="booking-section-title">
@@ -189,7 +329,7 @@ function MyBookingsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  const loadBookings = useCallback(async () => {
+  const loadBookings = useCallback(async ({ silent = false } = {}) => {
     const token = getGuestToken()
     if (!token) {
       setBookings([])
@@ -198,7 +338,7 @@ function MyBookingsPage() {
       return
     }
 
-    setLoading(true)
+    if (!silent) setLoading(true)
     setError('')
     try {
       const raw = await getGuestBookings(token)
@@ -207,7 +347,7 @@ function MyBookingsPage() {
       setBookings([])
       setError(err?.message || 'Could not load your bookings.')
     } finally {
-      setLoading(false)
+      if (!silent) setLoading(false)
     }
   }, [])
 
@@ -221,9 +361,20 @@ function MyBookingsPage() {
     const onAuthChanged = () => {
       void loadBookings()
     }
+    const onFocus = () => {
+      void loadBookings({ silent: true })
+    }
     window.addEventListener('guest-auth-changed', onAuthChanged)
-    return () => window.removeEventListener('guest-auth-changed', onAuthChanged)
+    window.addEventListener('focus', onFocus)
+    return () => {
+      window.removeEventListener('guest-auth-changed', onAuthChanged)
+      window.removeEventListener('focus', onFocus)
+    }
   }, [signedIn, loadBookings])
+
+  usePageVisibility((visible) => {
+    if (visible && signedIn) void loadBookings({ silent: true })
+  })
 
   const openSignIn = () => {
     window.dispatchEvent(new Event('open-guest-signin'))
@@ -258,7 +409,11 @@ function MyBookingsPage() {
             ) : (
               <ul className="booking-card-list">
                 {bookings.map((booking) => (
-                  <BookingCard key={getBookingId(booking) ?? JSON.stringify(booking)} booking={booking} />
+                  <BookingCard
+                    key={getBookingId(booking) ?? JSON.stringify(booking)}
+                    booking={booking}
+                    onPaid={() => void loadBookings({ silent: true })}
+                  />
                 ))}
               </ul>
             )}

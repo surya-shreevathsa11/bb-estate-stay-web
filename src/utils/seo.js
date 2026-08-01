@@ -77,7 +77,7 @@ const FAQ_PAGE_JSON_LD = {
       name: 'How do I book a stay at BB Estate Homestay?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'On this website, pick your check-in and check-out dates, choose a room, add the stay to your cart, complete the short guest sign-in when asked, and finish with secure online payment at checkout.',
+        text: 'On this website, pick your check-in and check-out dates, choose a room, add the stay to your cart, complete guest sign-in when asked, and submit a booking request. After the estate approves, complete secure online payment from My bookings.',
       },
     },
   ],
@@ -159,7 +159,7 @@ function getBreadcrumbJsonLd({ isCart, isMyBookings }) {
         {
           '@type': 'ListItem',
           position: 2,
-          name: 'Cart & checkout',
+          name: 'Cart & booking request',
           item: `${SITE_ORIGIN}/#cart`,
         },
       ],
@@ -196,26 +196,26 @@ const HOME = /** @type {SeoPayload} */ ({
 const MY_BOOKINGS = /** @type {SeoPayload} */ ({
   title: 'My bookings | BB Estate Homestay | Madikeri',
   description:
-    'View your confirmed and pending stays at BB Estate Homestay in Madikeri, Coorg—dates, payment, and booking details.',
+    'View requested, approved, confirmed, and cancelled stays at BB Estate Homestay in Madikeri, Coorg—dates, payment deadlines, and booking details.',
   canonical: `${SITE_ORIGIN}/`,
   ogUrl: `${SITE_ORIGIN}/`,
   ogTitle: 'My bookings | BB Estate Homestay | Madikeri',
   ogDescription:
-    'View your confirmed and pending stays at BB Estate Homestay in Madikeri, Coorg—dates, payment, and booking details.',
+    'View requested, approved, confirmed, and cancelled stays at BB Estate Homestay in Madikeri, Coorg—dates, payment deadlines, and booking details.',
   ogImageAlt: 'BB Estate Homestay—your booking history',
 })
 
 /** Cart / checkout view (`/#cart`). */
 const CART = /** @type {SeoPayload} */ ({
-  title: 'Cart & checkout | BB Estate Homestay | Madikeri',
+  title: 'Cart & booking request | BB Estate Homestay | Madikeri',
   description:
-    'Your cart at BB Estate Homestay: confirm dates, guests, and secure payment for your Madikeri, Coorg stay. Checkout for this Karnataka, India homestay booking.',
+    'Your cart at BB Estate Homestay: confirm dates and guests, then submit a booking request. Payment opens from My bookings after the estate approves your Madikeri, Coorg stay.',
   canonical: `${SITE_ORIGIN}/`,
   ogUrl: `${SITE_ORIGIN}/`,
-  ogTitle: 'Cart & checkout | BB Estate Homestay | Madikeri',
+  ogTitle: 'Cart & booking request | BB Estate Homestay | Madikeri',
   ogDescription:
-    'Your cart at BB Estate Homestay: confirm dates, guests, and secure payment for your Madikeri, Coorg stay. Checkout for this Karnataka, India homestay booking.',
-  ogImageAlt: 'BB Estate Homestay—booking checkout for your Madikeri, Coorg stay',
+    'Your cart at BB Estate Homestay: confirm dates and guests, then submit a booking request. Payment opens from My bookings after the estate approves your Madikeri, Coorg stay.',
+  ogImageAlt: 'BB Estate Homestay—booking request for your Madikeri, Coorg stay',
 })
 
 function setMetaAttribute(attrName, attrValue, content) {

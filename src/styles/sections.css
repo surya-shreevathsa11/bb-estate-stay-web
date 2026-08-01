@@ -373,15 +373,78 @@ body:has(main.my-bookings-page) .site-nav:not(.scrolled) .menu-toggle span {
   color: #38643c;
 }
 
+.booking-status-badge--requested,
 .booking-status-badge--pending {
   background: rgb(166 120 40 / 14%);
   color: #8a6428;
 }
 
+.booking-status-badge--approved {
+  background: rgb(56 100 100 / 12%);
+  color: #2f6b6b;
+}
+
+.booking-status-badge--rejected,
 .booking-status-badge--cancelled,
 .booking-status-badge--failed {
   background: rgb(120 40 40 / 10%);
   color: #7d2828;
+}
+
+.booking-status-message {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: var(--font-size-body);
+  line-height: 1.55;
+  background: rgb(166 120 40 / 10%);
+  color: var(--color-ink);
+}
+
+.booking-status-message--approved {
+  background: rgb(56 100 100 / 10%);
+}
+
+.booking-status-message--confirmed {
+  background: rgb(56 100 60 / 10%);
+}
+
+.booking-status-message--rejected,
+.booking-status-message--expired,
+.booking-status-message--cancelled {
+  background: rgb(120 40 40 / 8%);
+}
+
+.booking-deadline {
+  margin: 0 0 12px;
+  font-size: var(--font-size-body);
+  color: var(--color-bark);
+}
+
+.booking-pay-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 0 20px;
+}
+
+.booking-pay-actions .btn {
+  min-height: 48px;
+  border-radius: 10px;
+  letter-spacing: 0.12em;
+}
+
+.booking-pay-hint {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--color-bark);
+}
+
+.booking-pay-hint a {
+  color: var(--color-copper);
+  font-weight: 600;
 }
 
 .booking-confirmation-flag {
@@ -529,6 +592,42 @@ body:has(main.my-bookings-page) .site-nav:not(.scrolled) .menu-toggle span {
   font-size: var(--font-size-body);
   line-height: 1.65;
   color: rgb(28 18 8 / 72%);
+}
+
+.cart-request-success {
+  margin: 0 0 clamp(20px, 3vw, 28px);
+  padding: clamp(16px, 2.5vw, 22px);
+  border: 1px solid rgb(56 100 60 / 28%);
+  border-radius: 10px;
+  background: rgb(56 100 60 / 8%);
+  color: var(--color-ink);
+}
+
+.cart-request-success-title {
+  margin: 0 0 8px;
+  font-family: var(--font-heading-family);
+  font-size: clamp(1.15rem, 2vw, 1.35rem);
+  font-weight: 600;
+}
+
+.cart-request-success p {
+  margin: 0 0 12px;
+  font-size: var(--font-size-body);
+  line-height: 1.65;
+}
+
+.cart-request-success-link {
+  font-weight: 600;
+  color: var(--color-copper);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.cart-summary-note {
+  margin: 12px 0 0;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--color-bark);
 }
 
 .cart-page .nav-cart-lines {

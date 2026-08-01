@@ -48,6 +48,18 @@ export function removeCartItem(payload, token) {
   })
 }
 
+/** Room checkout: submit cart as a booking request (no Razorpay). Body: { name, email, phone }. */
+export function createBookingRequest(payload, token) {
+  return guestAuthorizedFetch('/api/guest/bookings/requests', token, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
+/**
+ * Create Razorpay order for an approved booking.
+ * Body: { bookingId, prepaidOptionId?, prepaidPercent? } — not cart contact fields.
+ */
 export function createGuestPaymentOrder(payload, token) {
   return guestAuthorizedFetch('/api/guest/payments/order', token, {
     method: 'POST',

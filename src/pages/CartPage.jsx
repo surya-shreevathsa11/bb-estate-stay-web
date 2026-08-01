@@ -7,7 +7,7 @@ import Navbar from '../sections/Navbar'
 import { useCart } from '../hooks/useCart'
 import { useGuestAuth } from '../hooks/useGuestAuth'
 import {
-  createGuestPaymentOrder,
+  createBookingRequest,
   getGuestToken,
   removeCartItem,
 } from '../services/api'
@@ -58,36 +58,6 @@ function filterPrimaryPrepaidOptions(options) {
   return primary.length > 0 ? primary : []
 }
 
-function getCheckoutPrepaidFields(lines, cart) {
-  let prepaidOptionId = 'primary'
-  let prepaidPercent = cart?.upperPercent ?? cart?.lowerPercent ?? null
-
-  for (const row of lines) {
-    const prepaidAll = Array.isArray(row.prepaidOptions) ? row.prepaidOptions : []
-    const primary = filterPrimaryPrepaidOptions(prepaidAll)
-    const opt = primary[0]
-    if (opt?.id != null && prepaidOptionId === 'primary') {
-      prepaidOptionId = String(opt.id)
-    }
-    if (prepaidPercent == null && opt?.percent != null) {
-      prepaidPercent = opt.percent
-    }
-  }
-
-  if (prepaidPercent == null) prepaidPercent = 30
-  const n = Number(prepaidPercent)
-  return {
-    prepaidOptionId,
-    prepaidPercent: Number.isFinite(n) ? n : 30,
-  }
-}
-
-function unwrapPayload(data) {
-  if (data == null || typeof data !== 'object') return data
-  if (data.data && typeof data.data === 'object') return data.data
-  return data
-}
-
 function toDateInputValue(value) {
   if (value == null) return undefined
   const s = String(value)
@@ -116,28 +86,6 @@ function buildRemoveCartPayload(row) {
   return payload
 }
 
-function loadRazorpayScript() {
-  return new Promise((resolve, reject) => {
-    if (typeof window !== 'undefined' && window.Razorpay) {
-      resolve()
-      return
-    }
-    const existing = document.querySelector('script[data-razorpay-checkout]')
-    if (existing) {
-      existing.addEventListener('load', () => resolve())
-      existing.addEventListener('error', () => reject(new Error('Payment script failed to load')))
-      return
-    }
-    const s = document.createElement('script')
-    s.src = 'https://checkout.razorpay.com/v1/checkout.js'
-    s.async = true
-    s.dataset.razorpayCheckout = '1'
-    s.onload = () => resolve()
-    s.onerror = () => reject(new Error('Could not load Razorpay checkout'))
-    document.body.appendChild(s)
-  })
-}
-
 function isValidEmail(s) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s).trim())
 }
@@ -147,13 +95,7 @@ function isValidPhone(s) {
   return digits.length >= 10
 }
 
-function CheckoutFlowModal({
-  open,
-  onClose,
-  onPaid,
-  prepaidOptionId = 'primary',
-  prepaidPercent = 30,
-}) {
+function RequestBookingModal({ open, onClose, onRequested }) {
   const [step, setStep] = useState('contact')
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
@@ -197,7 +139,7 @@ function CheckoutFlowModal({
     setStep('terms')
   }, [fullName, email, phone])
 
-  const startPayment = useCallback(async () => {
+  const submitRequest = useCallback(async () => {
     if (!accepted) return
     const token = getGuestToken()
     if (!token) {
@@ -207,81 +149,22 @@ function CheckoutFlowModal({
     setBusy(true)
     setErr('')
     try {
-      const raw = await createGuestPaymentOrder(
+      await createBookingRequest(
         {
-          email: email.trim(),
           name: fullName.trim(),
+          email: email.trim(),
           phone: phone.trim(),
-          prepaidOptionId,
-          prepaidPercent,
-          termsAcceptedAt: new Date().toISOString(),
         },
         token,
       )
-      const data = unwrapPayload(raw)
-
-      const redirectUrl = data?.redirectUrl || data?.checkoutUrl || data?.url
-      if (typeof redirectUrl === 'string' && redirectUrl.startsWith('http')) {
-        window.location.href = redirectUrl
-        return
-      }
-
-      const orderId =
-        data?.orderId ??
-        data?.order_id ??
-        data?.razorpayOrderId ??
-        data?.razorpay_order_id
-      const key =
-        data?.key ??
-        data?.razorpayKeyId ??
-        data?.razorpay_key_id ??
-        import.meta.env.VITE_RAZORPAY_KEY_ID
-      if (!orderId || !key) {
-        throw new Error('Payment session could not be started. Please try again later.')
-      }
-
-      await loadRazorpayScript()
-
-      const amount =
-        data?.amount ??
-        data?.amountInPaise ??
-        (typeof data?.amountInRupees === 'number' ? Math.round(data.amountInRupees * 100) : undefined) ??
-        (typeof data?.expectedPrepaidAmount === 'number'
-          ? Math.round(data.expectedPrepaidAmount * 100)
-          : undefined)
-
-      const options = {
-        key: String(key),
-        order_id: String(orderId),
-        currency: data?.currency || 'INR',
-        name: 'BB Estate Stay',
-        description: 'Homestay booking',
-        prefill: {
-          name: fullName.trim(),
-          email: email.trim(),
-          contact: phone.replace(/\D/g, ''),
-        },
-        handler() {
-          onPaid?.()
-          onClose()
-        },
-        modal: {
-          ondismiss() {},
-        },
-      }
-      if (amount != null && !Number.isNaN(Number(amount))) {
-        options.amount = String(amount)
-      }
-
-      const rzp = new window.Razorpay(options)
-      rzp.open()
+      onRequested?.()
       onClose()
     } catch (e) {
-      setErr(e?.message || 'Payment could not be started.')
+      setErr(e?.message || 'Could not submit your booking request.')
     } finally {
       setBusy(false)
     }
-  }, [accepted, fullName, email, phone, prepaidOptionId, prepaidPercent, onClose, onPaid])
+  }, [accepted, fullName, email, phone, onClose, onRequested])
 
   if (!open) return null
 
@@ -319,7 +202,7 @@ function CheckoutFlowModal({
 
         {step === 'contact' ? (
           <>
-            <p className="checkout-step-hint">Step 1 of 2</p>
+            <p className="checkout-step-hint">Step 1 of 2 — we&apos;ll send your stay request to the estate</p>
             <div className="checkout-contact-stack">
               <label className="form-field">
                 <span>Full name</span>
@@ -364,12 +247,12 @@ function CheckoutFlowModal({
           </>
         ) : (
           <>
-            <p className="checkout-step-hint">Step 2 of 2</p>
+            <p className="checkout-step-hint">Step 2 of 2 — payment happens only after the estate approves</p>
             <button type="button" className="checkout-terms-back" onClick={() => !busy && setStep('contact')}>
               ← Edit details
             </button>
             <div className="checkout-terms-modal-body">
-              <p>By proceeding, you agree to the following:</p>
+              <p>By submitting this request, you agree to the following:</p>
               <ul className="checkout-terms-list">
                 {TERMS_BULLETS.map((line) => (
                   <li key={line}>{line}</li>
@@ -392,9 +275,9 @@ function CheckoutFlowModal({
                 variant="primary"
                 className="checkout-terms-submit"
                 disabled={!accepted || busy}
-                onClick={startPayment}
+                onClick={submitRequest}
               >
-                {busy ? 'Starting checkout…' : 'Proceed to checkout'}
+                {busy ? 'Submitting request…' : 'Submit request'}
               </Button>
             </div>
           </>
@@ -413,14 +296,11 @@ function CartPage() {
     const ri = cart?.roomInfo
     return Array.isArray(ri) ? ri : EMPTY_ROOM_LINES
   }, [cart?.roomInfo])
-  const checkoutPrepaid = useMemo(
-    () => getCheckoutPrepaidFields(lines, cart),
-    [lines, cart],
-  )
   const [checkoutOpen, setCheckoutOpen] = useState(false)
   const [checkoutKey, setCheckoutKey] = useState(0)
   const [removingKey, setRemovingKey] = useState(null)
   const [removeError, setRemoveError] = useState('')
+  const [requestSuccess, setRequestSuccess] = useState(false)
 
   useEffect(() => {
     void refresh()
@@ -465,6 +345,12 @@ function CartPage() {
     [refresh, lineReactKey],
   )
 
+  const handleRequested = useCallback(async () => {
+    setRequestSuccess(true)
+    await refresh()
+    window.dispatchEvent(new Event('cart-updated'))
+  }, [refresh])
+
   return (
     <>
       <Navbar />
@@ -477,6 +363,18 @@ function CartPage() {
             </a>
           </header>
           <div className="cart-page-body">
+            {requestSuccess ? (
+              <div className="cart-request-success" role="status">
+                <p className="cart-request-success-title">Booking request submitted</p>
+                <p>
+                  Your request is pending property confirmation. We&apos;ll email you when the estate responds. You can
+                  also track status under My bookings — payment is only needed after approval.
+                </p>
+                <a className="cart-request-success-link" href="#my-bookings">
+                  View my bookings →
+                </a>
+              </div>
+            ) : null}
             {!signedIn ? (
               <p className="cart-page-empty">Sign in with Google or email to view your cart.</p>
             ) : loading ? (
@@ -484,7 +382,9 @@ function CartPage() {
             ) : error ? (
               <p className="form-message error">{error}</p>
             ) : lines.length === 0 ? (
-              <p className="cart-page-empty">No rooms in your cart yet.</p>
+              requestSuccess ? null : (
+                <p className="cart-page-empty">No rooms in your cart yet.</p>
+              )
             ) : (
               <div className="cart-detail">
                 {removeError ? <p className="form-message error">{removeError}</p> : null}
@@ -575,7 +475,7 @@ function CartPage() {
 
                         {primaryPrepaid.length > 0 ? (
                           <div className="cart-detail-block">
-                            <h3 className="cart-detail-block-title">Primary prepayment</h3>
+                            <h3 className="cart-detail-block-title">Primary prepayment (after approval)</h3>
                             <ul className="cart-prepaid-list">
                               {primaryPrepaid.map((opt) => (
                                 <li key={opt.id || opt.label} className="cart-prepaid-item">
@@ -610,7 +510,7 @@ function CartPage() {
                       )}
                       {primaryPayable != null && (
                         <div className="cart-summary-row">
-                          <dt>Payable now (primary)</dt>
+                          <dt>Payable after approval (primary)</dt>
                           <dd>{formatInr(primaryPayable)}</dd>
                         </div>
                       )}
@@ -621,16 +521,20 @@ function CartPage() {
                         </div>
                       )}
                     </dl>
+                    <p className="cart-summary-note">
+                      Submitting a request does not charge you. Payment opens only after the estate approves your stay.
+                    </p>
                     <div className="cart-summary-actions">
                       <Button
                         type="button"
                         variant="primary"
                         onClick={() => {
+                          setRequestSuccess(false)
                           setCheckoutKey((k) => k + 1)
                           setCheckoutOpen(true)
                         }}
                       >
-                        Proceed to check-out
+                        Request booking
                       </Button>
                     </div>
                   </aside>
@@ -641,13 +545,11 @@ function CartPage() {
         </Container>
       </main>
       <Footer />
-      <CheckoutFlowModal
+      <RequestBookingModal
         key={checkoutKey}
         open={checkoutOpen}
         onClose={() => setCheckoutOpen(false)}
-        onPaid={() => void refresh()}
-        prepaidOptionId={checkoutPrepaid.prepaidOptionId}
-        prepaidPercent={checkoutPrepaid.prepaidPercent}
+        onRequested={() => void handleRequested()}
       />
     </>
   )
